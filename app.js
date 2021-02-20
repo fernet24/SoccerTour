@@ -13,9 +13,9 @@ app.use('/img', express.static(__dirname + 'public/img'))
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 
-//set templating engine
+//set templating engine 
 app.set('view engine', 'ejs');
-//app.set('views', './views')
+app.set('views', './views')
 
 //MySQL
 const pool = mysql.createPool({
@@ -52,7 +52,8 @@ app.post('', (req, res)=>{
 */
 
 
-//get values from account table
+//Home route
+/*
 app.get('', (req, res)=>{
 	pool.getConnection((err, connection)=>{
 		if(err) throw err
@@ -71,25 +72,18 @@ app.get('', (req, res)=>{
 			}
 		})
 	})
-})
+}) */
 
 
 
 
-
-
-//stores passed data (middleware)
-app.use(bodyParser.urlencoded({ extended: false}))
-app.use(bodyParser.json())
-
-//navigation
-/*
+//Home route
 app.get('', function(req, res){
 	const text = "users";
 	res.render('index', { text: text})
 
 });
-*/
+
 
 app.get('/signup', function(req, res){
 	res.render('signup');
@@ -109,5 +103,5 @@ app.post('/homepage', function(req, res){
 */
 
 
-//Listen on port 3000
+//start app
 app.listen(port, () => console.info('Listening on port ${port}'))

@@ -1,0 +1,86 @@
+body{
+	background-color: lightgray;
+	margin: 0px;
+	padding: 0px;
+}
+
+header{
+	padding-top: 10px;
+	color: white;
+	background-color: black;
+}
+
+.logo{
+	display: inline-block;
+	margin-left: 20px;
+}
+
+.navMenu{
+	list-style-type: none;
+	display: box;
+	text-align: right;
+	float: right;
+}
+
+li{
+	display: inline-block;
+	margin-right: 20px;
+}
+
+section{
+	background-color: black;
+	color: white;
+	font-style: bold;
+}
+
+img{
+	width: 100%;
+	height: auto;
+	opacity: .8;
+}
+
+.pictureContainer{
+	position: relative;
+}
+
+.topleft {
+  position: absolute;
+  top: 20px;
+  left: 16px;
+  font-size: 40px;
+}
+
+.topright {
+  position: absolute;
+  top: 20px;
+  right: 16px;
+  font-size: 30px;
+}
+
+.login{
+	display: inline;
+}
+
+.signup{
+	display: inline;
+}
+
+.descriptionSection{
+	display: flex;
+}
+
+.appDescription{
+	padding: 0px 300px 50px 50px;
+	margin-right: 100px;
+	font-size: 20px;
+}
+
+.creators{
+
+}
+
+footer{
+	background-color: black;
+	color: white;
+}
+
