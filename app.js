@@ -10,21 +10,29 @@ app.use('/css', express.static(__dirname + 'public/css'))
 app.use('/js', express.static(__dirname + 'public/js'))
 app.use('/img', express.static(__dirname + 'public/img'))
 
-app.use(bodyParser.urlencoded({extended: false}))
+//app.use(bodyParser.urlencoded({extended: false}))
+app.use(express.urlencoded({extended: true}));
 app.use(bodyParser.json())
+
 
 //set templating engine 
 app.set('view engine', 'ejs');
 app.set('views', './views')
 
 //MySQL
-const pool = mysql.createPool({
+const connection = mysql.createConnection({
 	connectionLimit : 10,
 	host: 'localhost',
 	user: 'root',
 	password: '',
-	database: 'soccertour_db',
+	database: 'soccertour',
 	insecureAuth : true
+});
+
+connection.connect(function(err){
+	if(err) throw err;
+
+	console.log('Connected...');
 });
 
 /*
@@ -75,8 +83,6 @@ app.get('', (req, res)=>{
 }) */
 
 
-
-
 //Home route
 app.get('', function(req, res){
 	const text = "users";
@@ -93,19 +99,30 @@ app.get('/signup', function(req, res){
 	res.render('signup');
 });
 
+app.get('/homepage', function(req, res){
+	res.render('homepage');
+});
 
+/*
 app.get('/homepage', function(req, res){
 	const username = req.query.username;
 	res.render('homepage', {username: username});
 });
+*/
 
-/*
 app.post('/homepage', function(req, res){
+	console.log(req.body);
+
+	var sql = "INSERT INTO client VALUES('" + req.body.email + "', '"+ req.body.username + "', '" + req.body.password + "')"
+
+	connection.query(sql, function(err){
+		if(err) throw err
+		console.log('Posted successfully!')
+	})
 	const username = req.body.username;
 	res.render('homepage', {username: username});
 });
-*/
 
 
 //start app
-app.listen(port, () => console.info('Listening on port ${port}'))
+app.listen(port, () => console.info('Listening on port ' + port))
