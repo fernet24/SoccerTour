@@ -45,7 +45,7 @@ app.get('', function(req, res){
 });
 
 app.get('/login', function(req, res){
-	res.render('login');
+	res.render('login', { NotExist: ''});
 });
 
 
@@ -63,10 +63,10 @@ app.get('/homepage', function(req, res){
 		if(err) throw err
 
 		if(rows.length === 0)
-			res.render('homepage', {username: 'NOT DETERMINED'})	
+			//res.render('homepage', {username: 'NOT DETERMINED'})
+			res.render('login', {NotExist: 'user does not exist'});	
 		else
-			//rows[0].usernamee
-			res.render('homepage', {username: rows[0].username})
+			res.render('homepage', {username: rows[0].username});
 		
 	})
 });
