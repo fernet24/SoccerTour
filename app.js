@@ -1,3 +1,5 @@
+
+//import dependencies
 const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql')
@@ -34,6 +36,66 @@ connection.connect(function(err){
 
 	console.log('Connected...');
 });
+
+//Home route
+app.get('', function(req, res){
+	const text = "users";
+	res.render('index', { text: text})
+
+});
+
+app.get('/login', function(req, res){
+	res.render('login');
+});
+
+
+app.get('/signup', function(req, res){
+	res.render('signup');
+});
+
+app.get('/homepage', function(req, res){
+
+	var usn = req.query.username;
+	var psw = req.query.password;
+	var sql = "SELECT username, password FROM client WHERE username = ? AND password = ?";
+
+	connection.query(sql, [usn,psw], function(err, rows, fields){
+		if(err) throw err
+
+		if(rows.length === 0)
+			res.render('homepage', {username: 'NOT DETERMINED'})	
+		else
+			//rows[0].usernamee
+			res.render('homepage', {username: rows[0].username})
+		
+	})
+});
+
+/*
+app.get('/homepage', function(req, res){
+	const username = req.query.username;
+	res.render('homepage', {username: username});
+});
+*/
+
+//Create record
+app.post('/homepage', function(req, res){
+	console.log(req.body);
+
+	var sql = "INSERT INTO client VALUES('" + req.body.username + "', '"+ req.body.email + "', '" + req.body.password + "')"
+
+	connection.query(sql, function(err){
+		if(err) throw err
+		console.log('Posted successfully!')
+	})
+	const username = req.body.username;
+	res.render('homepage', {username: username});
+});
+
+
+//start app
+app.listen(port, () => console.info('Listening on port ' + port))
+
 
 /*
 //create a record
@@ -81,48 +143,3 @@ app.get('', (req, res)=>{
 		})
 	})
 }) */
-
-
-//Home route
-app.get('', function(req, res){
-	const text = "users";
-	res.render('index', { text: text})
-
-});
-
-app.get('/login', function(req, res){
-	res.render('login');
-});
-
-
-app.get('/signup', function(req, res){
-	res.render('signup');
-});
-
-app.get('/homepage', function(req, res){
-	res.render('homepage');
-});
-
-/*
-app.get('/homepage', function(req, res){
-	const username = req.query.username;
-	res.render('homepage', {username: username});
-});
-*/
-
-app.post('/homepage', function(req, res){
-	console.log(req.body);
-
-	var sql = "INSERT INTO client VALUES('" + req.body.email + "', '"+ req.body.username + "', '" + req.body.password + "')"
-
-	connection.query(sql, function(err){
-		if(err) throw err
-		console.log('Posted successfully!')
-	})
-	const username = req.body.username;
-	res.render('homepage', {username: username});
-});
-
-
-//start app
-app.listen(port, () => console.info('Listening on port ' + port))
