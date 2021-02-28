@@ -63,20 +63,13 @@ app.get('/homepage', function(req, res){
 		if(err) throw err
 
 		if(rows.length === 0)
-			//res.render('homepage', {username: 'NOT DETERMINED'})
-			res.render('login', {NotExist: 'user does not exist'});	
+			res.render('login', {NotExist: 'Error. Try again.'});	
 		else
 			res.render('homepage', {username: rows[0].username});
 		
 	})
 });
 
-/*
-app.get('/homepage', function(req, res){
-	const username = req.query.username;
-	res.render('homepage', {username: username});
-});
-*/
 
 //Create record
 app.post('/homepage', function(req, res){
@@ -96,6 +89,13 @@ app.post('/homepage', function(req, res){
 //start app
 app.listen(port, () => console.info('Listening on port ' + port))
 
+
+/*
+app.get('/homepage', function(req, res){
+	const username = req.query.username;
+	res.render('homepage', {username: username});
+});
+*/
 
 /*
 //create a record
