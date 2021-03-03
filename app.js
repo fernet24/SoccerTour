@@ -45,7 +45,7 @@ app.get('', function(req, res){
 });
 
 app.get('/login', function(req, res){
-	res.render('login', { NotExist: ''});
+	res.render('login', { Error: ''});
 });
 
 
@@ -63,7 +63,7 @@ app.get('/homepage', function(req, res){
 		if(err) throw err
 
 		if(rows.length === 0)
-			res.render('login', {NotExist: 'Error. Try again.'});	
+			res.render('login', {Error: 'Incorrect. Try again.'});
 		else
 			res.render('homepage', {username: rows[0].username});
 		
@@ -81,8 +81,8 @@ app.post('/homepage', function(req, res){
 		if(err) throw err
 		console.log('Posted successfully!')
 	})
-	const username = req.body.username;
-	res.render('homepage', {username: username});
+	
+	res.render('homepage', {username: req.body.username});
 });
 
 
