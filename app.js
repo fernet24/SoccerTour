@@ -110,6 +110,13 @@ app.post('/homepage', function(req, res){
 
 });
 
+app.get('/search', function(res, res){
+	res.render('search');
+});
+
+app.get('/profile', function(res, res){
+	res.render('profile');
+});
 
 //start app
 app.listen(port, () => console.info('Listening on port ' + port))
