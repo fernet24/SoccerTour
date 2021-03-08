@@ -12,7 +12,7 @@ app.use('/css', express.static(__dirname + 'public/css'))
 app.use('/js', express.static(__dirname + 'public/js'))
 app.use('/img', express.static(__dirname + 'public/img'))
 
-//app.use(bodyParser.urlencoded({extended: false}))
+//middleware
 app.use(express.urlencoded({extended: true}));
 app.use(bodyParser.json())
 
@@ -41,11 +41,25 @@ connection.connect(function(err){
 app.get('', function(req, res){
 	const text = "users";
 	res.render('index', { text: text})
-
 });
 
 app.get('/login', function(req, res){
-	res.render('login', { Error: ''});
+
+	if(req.query.username === undefined)
+		res.render('login', { Error: ''});
+	else{
+		var usn = req.query.username;
+		var sql = "SELECT username, password FROM client WHERE username = ?";
+
+		connection.query(sql, [usn], function(err, rows, fields){
+			if(err) throw err
+
+			if(rows.length === 0)
+				res.render('login', {Error: 'Incorrect. Try again.'});
+			else
+				res.render('homepage', {username: rows[0].username});
+		})
+	}
 });
 
 
@@ -54,19 +68,8 @@ app.get('/signup', function(req, res){
 });
 
 app.get('/homepage', function(req, res){
-
 	var usn = req.query.username;
-	var sql = "SELECT username, password FROM client WHERE username = ?";
-
-	connection.query(sql, [usn], function(err, rows, fields){
-		if(err) throw err
-
-		if(rows.length === 0)
-			res.render('login', {Error: 'Incorrect. Try again.'});
-		else
-			res.render('homepage', {username: rows[0].username});
-		
-	})
+	res.render('homepage', {username: usn});
 });
 
 
@@ -93,7 +96,6 @@ app.post('/homepage', function(req, res){
 				exist_flag = true;
 			}
 		}
-		console.log('outside for-loop: ' + exist_flag);
 
 		if(!exist_flag)
 		{
@@ -111,67 +113,13 @@ app.post('/homepage', function(req, res){
 });
 
 app.get('/search', function(res, res){
-	res.render('search');
+	res.render('search', {username: ''});
 });
 
 app.get('/profile', function(res, res){
-	res.render('profile');
+	res.render('profile', {username: ''});
 });
 
 //start app
 app.listen(port, () => console.info('Listening on port ' + port))
 
-
-/*
-app.get('/homepage', function(req, res){
-	const username = req.query.username;
-	res.render('homepage', {username: username});
-});
-*/
-
-/*
-//create a record
-app.post('', (req, res)=>{
-	pool.getConnection((err, connection)=>{
-		if(err) throw err
-		console.log('connected as id ${connection.threadId}')
-
-		const params = req.body
-
-		connection.query('INSERT INTO account SET ?', params, (err, rows)=>{
-			connection.release()
-
-			if(!err){
-				res.send('Account with the record username: ${params.id} has been added.')
-			}else{
-				console.log(err)
-			}
-		})
-
-		console.log(req.body)
-	})
-})
-*/
-
-
-//Home route
-/*
-app.get('', (req, res)=>{
-	pool.getConnection((err, connection)=>{
-		if(err) throw err
-		console.log('connected as id ${connection.threadId}')
-
-		connection.query('SELECT * FROM account', (err, rows)=>{
-			connection.release()
-
-			if(!err){
-
-				res.send(rows)
-				//const text = rows;
-				//res.render('index', {text: text})
-			}else{
-				console.log(err)
-			}
-		})
-	})
-}) */
