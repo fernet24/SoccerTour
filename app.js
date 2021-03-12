@@ -2,9 +2,11 @@
 //import dependencies
 const express = require('express');
 const bodyParser = require('body-parser');
-const mysql = require('mysql')
+const mysql = require('mysql');
 const app = express();
-const port = 3000
+const session = require('express-session');
+const jwt = require('jsonwebtoken');
+const port = 3000;
 
 //Static files
 app.use(express.static('public'))
@@ -12,9 +14,18 @@ app.use('/css', express.static(__dirname + 'public/css'))
 app.use('/js', express.static(__dirname + 'public/js'))
 app.use('/img', express.static(__dirname + 'public/img'))
 
-//middleware
+//middleware for controllers
 app.use(express.urlencoded({extended: true}));
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+
+//new
+app.use(express.json());
+
+app.use(session({
+	secret: 'secret-key',
+	resave: false,
+	saveUninitialized: false,
+}));
 
 
 //set templating engine 
@@ -37,13 +48,15 @@ connection.connect(function(err){
 	console.log('Connected...');
 });
 
+sessionData = "";
+
 //Home route
-app.get('', function(req, res){
+app.get('', function(req, res, next){
 	const text = "users";
 	res.render('index', { text: text})
 });
 
-app.get('/login', function(req, res){
+app.get('/login', auth, function(req, res){
 
 	if(req.query.username === undefined)
 		res.render('login', { Error: ''});
@@ -67,7 +80,8 @@ app.get('/signup', function(req, res){
 	res.render('signup', { Error: ''});
 });
 
-app.get('/homepage', function(req, res){
+app.get('/homepage', inSession, function(req, res){
+
 	var usn = req.query.username;
 	res.render('homepage', {username: usn});
 });
@@ -112,13 +126,28 @@ app.post('/homepage', function(req, res){
 
 });
 
-app.get('/search', function(res, res){
+app.get('/search', function(req, res){
+	
 	res.render('search', {username: ''});
 });
 
-app.get('/profile', function(res, res){
+app.get('/profile', function(req, res){
+	
 	res.render('profile', {username: ''});
 });
+
+//middleware functions
+function auth(req, res, next){
+	console.log('login testing');
+	next();
+}
+
+function inSession(req, res, next){
+	console.log(req.query.username);
+	next();
+}
+
+
 
 //start app
 app.listen(port, () => console.info('Listening on port ' + port))
