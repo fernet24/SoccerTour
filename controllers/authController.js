@@ -1,19 +1,5 @@
-const mysql = require('mysql');
 
-const connection = mysql.createConnection({
-	connectionLimit : 10,
-	host: 'localhost',
-	user: 'root',
-	password: '',
-	database: 'soccertour',
-	insecureAuth : true
-});
-
-connection.connect(function(err){
-	if(err) throw err;
-
-	console.log('Connected...');
-});
+const connection = require('../models/databaseConfig');
 
 module.exports.index_get = (req, res) => {
 	const text = "users";
