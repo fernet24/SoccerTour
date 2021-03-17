@@ -1,5 +1,5 @@
 
-const connection = require('../models/databaseConfig');
+const connection = require('../models/database/databaseConfig');
 
 module.exports.index_get = (req, res) => {
 	const text = "users";
