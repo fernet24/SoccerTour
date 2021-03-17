@@ -1,9 +1,26 @@
 
-const connection = require('../models/User');
+const mysql = require('mysql');
 
-//ORM-SEQUELIZE
+const connection = mysql.createConnection({
+	connectionLimit : 10,
+	host: 'localhost',
+	user: 'root',
+	password: '',
+	database: 'soccertour',
+	insecureAuth : true
+});
+
+connection.connect(function(err){
+	if(err) throw err;
+
+	console.log('Connected...');
+});
+
+module.exports = connection;
 
 /*
+
+//ORM-SEQUELIZE
 
 var Sequelize = require('sequelize');
 
@@ -30,12 +47,6 @@ var Client = connection.define('client', {
 	password: Sequelize.STRING
 });
 
-connection.sync().then(function(){
-	Client.create({
-		email: 'hello@test.com',
-		username: 'hello',
-		password: 'hhh',
-	});
-})
+module.exports = connection;
 
 */

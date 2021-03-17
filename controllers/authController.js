@@ -69,6 +69,12 @@ module.exports.homepage_post = (req, res) => {
 	});
 }
 
+//*************testing POST****
+
+
+
+//*****************************
+
 module.exports.search_get = (req, res) => {
 	res.render('search', {username: ''});
 }
