@@ -41,12 +41,6 @@ const connection = new Sequelize(
     }
 );
 
-var Client = connection.define('client', {
-	username: Sequelize.STRING,
-	email: Sequelize.STRING,
-	password: Sequelize.STRING
-});
-
 module.exports = connection;
 
 */
