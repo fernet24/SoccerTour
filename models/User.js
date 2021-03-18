@@ -1,6 +1,69 @@
 
 //const connection = require('database/databaseConfig');
 
+class User{
+	constructor(id, username, email, password){
+		this.id = id;
+		this.username = username;
+		this.email = email;
+		this.password = password;
+	}
+
+	//get methods
+	getID(){
+		return this.id;
+	}
+
+	getUsername(){
+		return this.username;
+	}
+
+	getEmail(){
+		return this.email;
+	}
+
+	getPassword(){
+		return this.password;
+	}
+
+	//set methods
+	setUsername(username){
+		this.username = username;
+	}
+
+	setEmail(email){
+		this.email = email;
+	}
+
+	setPassword(password){
+		this.password = password;
+	}
+
+	//find user
+	findID(id){
+		//sql query
+
+		//return username
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//************************************************************
+//ORM-SEQUELIZE
+
+/*
 var User = connection.define('user', {
 	username: {
 		type: DataTypes.STRING,
@@ -25,30 +88,7 @@ var User = connection.define('user', {
 	}
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//ORM-SEQUELIZE
+*/
 
 /*
 
