@@ -17,3 +17,30 @@ connection.connect(function(err){
 });
 
 module.exports = connection;
+
+/*
+
+//ORM-SEQUELIZE
+
+var Sequelize = require('sequelize');
+
+const connection = new Sequelize(
+    'sequelize_testing',
+    'root',
+    '',
+    {
+        host: 'localhost',
+        dialect: 'mysql',
+        pool: {
+            max: 5,
+            min: 0,
+            require: 30000,
+            idle: 10000
+        },
+        //logging: false
+    }
+);
+
+module.exports = connection;
+
+*/
