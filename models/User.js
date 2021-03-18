@@ -50,7 +50,7 @@ var User = connection.define('user', {
 
 //ORM-SEQUELIZE
 
-
+/*
 
 var Sequelize = require('sequelize');
 
