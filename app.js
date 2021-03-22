@@ -34,6 +34,5 @@ app.set('views', './views');
 
 app.use(authRoutes);
 
-
 //start app
 app.listen(port, () => console.info('Listening on port ' + port));

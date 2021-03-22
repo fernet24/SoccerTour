@@ -1,4 +1,5 @@
 
+
 const mysql = require('mysql');
 
 const connection = mysql.createConnection({
@@ -18,14 +19,16 @@ connection.connect(function(err){
 
 module.exports = connection;
 
-/*
 
+
+
+/*
 //ORM-SEQUELIZE
 
 var Sequelize = require('sequelize');
 
 const connection = new Sequelize(
-    'sequelize_testing',
+    'seq_test',
     'root',
     '',
     {

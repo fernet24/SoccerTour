@@ -1,5 +1,11 @@
 
+//For mysql
 const connection = require('../models/database/databaseConfig');
+
+//For sequelize
+//const connect_UserModel = require('../models/database/User');
+//const connect_GroupModel = require('../models/database/Group');
+
 
 module.exports.index_get = (req, res) => {
 	const text = "users";
