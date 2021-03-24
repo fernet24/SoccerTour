@@ -3,55 +3,8 @@
 //const connection = require('../models/database/databaseConfig');
 
 //For sequelize
-//const connection = require('../models/User');
-//const connect_GroupModel = require('../models/database/Group');
-
-
-var Sequelize = require('sequelize');
-
-const connection = new Sequelize(
-    'seq_test',
-    'root',
-    '',
-    {
-        host: 'localhost',
-        dialect: 'mysql',
-        pool: {
-            max: 5,
-            min: 0,
-            require: 30000,
-            idle: 10000
-        },
-        //logging: false
-    }
-);
-
-var User = connection.define('user', {
-	username: {
-		type: Sequelize.STRING,
-		primaryKey: true,
-		unique: true,
-		allowNull: false, //can user enter a null value (false)
-		validate: {
-			len: {
-				args: [5, 20],
-				msg: 'username not valid.'
-			}
-		}
-	},
-	email: {
-		type: Sequelize.STRING,
-		unique: true,
-		allowNull: false,
-		isEmail: true
-	},
-	password: {
-		type: Sequelize.STRING,
-		allowNull: false
-	}
-
-});
-
+const connection = require('../models/User');
+const User = require('../models/User');
 
 module.exports.index_get = (req, res) => {
 	const text = "users";
