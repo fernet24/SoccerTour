@@ -1,7 +1,27 @@
 
-const connection = require('database/databaseConfig');
+//const Sequelize = require('sequelize');
+//const connection = require('./database/databaseConfig');
 
+const Sequelize = require('sequelize');
 
+const connection = new Sequelize(
+    'seq_test',
+    'root',
+    '',
+    {
+        host: 'localhost',
+        dialect: 'mysql',
+        pool: {
+            max: 5,
+            min: 0,
+            require: 30000,
+            idle: 10000
+        },
+        //logging: false
+    }
+);
+
+//USER MODEL
 var User = connection.define('user', {
 	username: {
 		type: Sequelize.STRING,
@@ -29,22 +49,6 @@ var User = connection.define('user', {
 
 module.exports = connection;
 
-/*
-
-connection.sync({
-
-}).then(function(){
-	return User.create({
-		username: 'rammDog',
-		email: 'cool@test',
-		password: 'aaaa'
-	})
-}).catch(function (error){ //catch any then function errors
-	console.log(error);
-
-});
-
-*/
 
 
 

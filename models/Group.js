@@ -1,6 +1,8 @@
 
 const connection = require('database/databaseConfig');
 
+module.exports = connection;
+
 var Group = connection.define('group',{
 	title: {
 		type: Sequelize.STRING,
@@ -14,7 +16,22 @@ var Group = connection.define('group',{
 	time: {
 		type: Sequelize.STRING
 	},
+	organizer: {
+		type: Sequelize.STRING,
+		references: {
+			model: 'user',
+			key: 'username'
+		}
+	},
+	members: {
+		type: Sequelize.STRING,
+		references: {
+			model: 'user',
+			key: 'username'
+		}
+	}
 });
+
 
 module.exports = connection;
 

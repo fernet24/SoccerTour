@@ -1,10 +1,56 @@
 
 //For mysql
-const connection = require('../models/database/databaseConfig');
+//const connection = require('../models/database/databaseConfig');
 
 //For sequelize
-//const connect_UserModel = require('../models/database/User');
+//const connection = require('../models/User');
 //const connect_GroupModel = require('../models/database/Group');
+
+
+var Sequelize = require('sequelize');
+
+const connection = new Sequelize(
+    'seq_test',
+    'root',
+    '',
+    {
+        host: 'localhost',
+        dialect: 'mysql',
+        pool: {
+            max: 5,
+            min: 0,
+            require: 30000,
+            idle: 10000
+        },
+        //logging: false
+    }
+);
+
+var User = connection.define('user', {
+	username: {
+		type: Sequelize.STRING,
+		primaryKey: true,
+		unique: true,
+		allowNull: false, //can user enter a null value (false)
+		validate: {
+			len: {
+				args: [5, 20],
+				msg: 'username not valid.'
+			}
+		}
+	},
+	email: {
+		type: Sequelize.STRING,
+		unique: true,
+		allowNull: false,
+		isEmail: true
+	},
+	password: {
+		type: Sequelize.STRING,
+		allowNull: false
+	}
+
+});
 
 
 module.exports.index_get = (req, res) => {
@@ -13,6 +59,11 @@ module.exports.index_get = (req, res) => {
 }
 
 module.exports.login_get = (req, res) => {
+	//temp
+	res.render('login');
+
+	/*
+
 	if(req.query.username === undefined)
 		res.render('login', { Error: ''});
 	else{
@@ -28,6 +79,8 @@ module.exports.login_get = (req, res) => {
 				res.render('homepage', {username: rows[0].username});
 		})
 	}
+
+	*/
 }
 
 module.exports.signup_get = (req, res) => {
@@ -39,40 +92,27 @@ module.exports.homepage_get = (req, res) => {
 	res.render('homepage', {username: usn});
 }
 
-module.exports.homepage_post = (req, res) => {
-	var email = req.body.email;
-	var username = req.body.username;
-	var password = req.body.password;
+//link: https://www.esparkinfo.com/node-js-with-mysql-using-sequelize-express.html
 
-	var exist_db = "SELECT email FROM client WHERE EXISTS(SELECT email = ?)";
+module.exports.signup_post = (req, res) => {	
+	//validate request
+	if (!(req.body.username || req.body.email || req.body.password)){
+		res.render('signup', {Error: 'Slot is empty. Try again'});
+		return;
+	}
+	else{
+		const user = {
+			username: req.body.username,
+			email: req.body.email,
+			password: req.body.password,
+		};
 
-	connection.query(exist_db, [email], function(err, rows){
-		if(err) throw err;
-
-		var exist_flag = false;
-
-		//BIG O(N)***
-		for(i = 0; i < rows.length; i++)
-		{
-			if(rows[i].email === email)
-			{
-				res.render('signup', { Error: 'Account Exist Already.'});
-				exist_flag = true;
-			}
-		}
-
-		if(!exist_flag)
-		{
-			var insert_db = "INSERT INTO client VALUES('" + username + "', '"+ email + "', '" + password + "')"
-
-			connection.query(insert_db, function(err){
-				if(err) throw err;
-
-				console.log('Posted successfully!');
-				res.render('homepage', {username: username});
-			});
-		}
-	});
+		User.create(user).then(data => {
+			res.render('signup', {Error: 'Account was created successfully!'});
+		}).catch(err => {
+			res.render('signup', {Error: 'Try again.'})
+		})
+	}
 }
 
 
