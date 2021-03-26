@@ -12,11 +12,8 @@ module.exports.index_get = (req, res) => {
 }
 
 module.exports.login_get = (req, res) => {
-	//temp
-	res.render('login');
 
 	/*
-
 	if(req.query.username === undefined)
 		res.render('login', { Error: ''});
 	else{
@@ -32,8 +29,19 @@ module.exports.login_get = (req, res) => {
 				res.render('homepage', {username: rows[0].username});
 		})
 	}
-
 	*/
+
+	if(req.query.username === undefined)
+		res.render('login', {Error: ''});
+	else{
+		const user =  User.findOne({ where: { username: req.query.username } });
+		if (user != req.query.username) //=== null
+			res.render('login', {Error: 'Not Found.'}); 
+		else {
+			res.render('homepage', {username: req.query.username});
+		}
+	} 
+
 }
 
 module.exports.signup_get = (req, res) => {
