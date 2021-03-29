@@ -11,35 +11,20 @@ module.exports.index_get = (req, res) => {
 	res.render('index', { text: text})
 }
 
-module.exports.login_get = (req, res) => {
-
-	/*
-	if(req.query.username === undefined)
-		res.render('login', { Error: ''});
-	else{
-		var usn = req.query.username;
-		var sql = "SELECT username, password FROM client WHERE username = ?";
-
-		connection.query(sql, [usn], function(err, rows, fields){
-			if(err) throw err
-
-			if(rows.length === 0)
-				res.render('login', {Error: 'Incorrect. Try again.'});
-			else
-				res.render('homepage', {username: rows[0].username});
-		})
-	}
-	*/
+module.exports.login_get = async (req, res) => {
 
 	if(req.query.username === undefined)
 		res.render('login', {Error: ''});
 	else{
-		const user =  User.findOne({ where: { username: req.query.username } });
-		if (user != req.query.username) //=== null
+		
+		const user = await User.findOne({ where: { username: req.query.username } });
+		
+		if (user.username != req.query.username) //=== null || != req.query.username
 			res.render('login', {Error: 'Not Found.'}); 
 		else {
 			res.render('homepage', {username: req.query.username});
 		}
+		
 	} 
 
 }
