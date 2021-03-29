@@ -16,17 +16,16 @@ module.exports.login_get = async (req, res) => {
 	if(req.query.username === undefined)
 		res.render('login', {Error: ''});
 	else{
+		try{
+			const user = await User.findOne({ where: { username: req.query.username } });
 		
-		const user = await User.findOne({ where: { username: req.query.username } });
-		
-		if (user.username != req.query.username) //=== null || != req.query.username
-			res.render('login', {Error: 'Not Found.'}); 
-		else {
-			res.render('homepage', {username: req.query.username});
-		}
-		
+			if (user.username === req.query.username) 
+				res.render('homepage', {username: req.query.username}); 
+			
+		}catch(e){
+			res.render('login', {Error: 'Sorry. Try again.'});
+		}	
 	} 
-
 }
 
 module.exports.signup_get = (req, res) => {
