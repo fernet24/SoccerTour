@@ -5,6 +5,8 @@
 //For sequelize
 const connection = require('../models/User');
 const User = require('../models/User');
+//const hashPassword = require('../models/User');
+//const bycrypt = require('bcryptjs');
 
 module.exports.index_get = (req, res) => {
 	const text = "users";
@@ -46,16 +48,21 @@ module.exports.signup_post = (req, res) => {
 		return;
 	}
 	else{
-		const user = {
-			username: req.body.username,
-			email: req.body.email,
-			password: req.body.password,
-		};
+		
+		connection.sync({
+			//force: true //forces to delete all values from table
+		}).then(function(){
+			const user = {
+				username: req.body.username,
+				email: req.body.email,
+				password: req.body.password,
+			};
 
-		User.create(user).then(data => {
-			res.render('signup', {Error: 'Account was created successfully!'});
-		}).catch(err => {
-			res.render('signup', {Error: 'Try again.'})
+			User.create(user).then(data => {
+				res.render('signup', {Error: 'Account was created successfully!'});
+			}).catch(err => {
+				res.render('signup', {Error: 'Try again.'})
+			})
 		})
 	}
 }

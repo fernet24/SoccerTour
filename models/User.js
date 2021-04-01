@@ -1,7 +1,7 @@
 
 const Sequelize = require('sequelize');
 const connection = require('./database/databaseConfig');
-
+const bycrypt = require('bcryptjs');
 
 //USER MODEL
 var User = connection.define('user', {
@@ -29,8 +29,10 @@ var User = connection.define('user', {
 	}
 });
 
+
 module.exports = connection;
 module.exports = User;
+//module.exports = hashPassword;
 
 
 
