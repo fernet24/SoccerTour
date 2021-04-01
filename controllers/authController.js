@@ -5,8 +5,7 @@
 //For sequelize
 const connection = require('../models/User');
 const User = require('../models/User');
-//const hashPassword = require('../models/User');
-//const bycrypt = require('bcryptjs');
+const bycrypt = require('bcryptjs');
 
 module.exports.index_get = (req, res) => {
 	const text = "users";
@@ -21,7 +20,7 @@ module.exports.login_get = async (req, res) => {
 		try{
 			const user = await User.findOne({ where: { username: req.query.username } });
 		
-			if (user.username === req.query.username) 
+			if (user.username === req.query.username && user.password === req.query.password) 
 				res.render('homepage', {username: req.query.username}); 
 			
 		}catch(e){
@@ -51,11 +50,17 @@ module.exports.signup_post = (req, res) => {
 		
 		connection.sync({
 			//force: true //forces to delete all values from table
-		}).then(function(){
+		}).then(async function(){
+
+			//hash password
+			const saltRounds = 10;
+			const salt = await bycrypt.genSaltSync(saltRounds);
+			const hash = await bycrypt.hashSync(req.body.password, salt);
+			
 			const user = {
 				username: req.body.username,
 				email: req.body.email,
-				password: req.body.password,
+				password: hash,
 			};
 
 			User.create(user).then(data => {
