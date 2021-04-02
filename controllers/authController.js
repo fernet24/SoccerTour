@@ -5,7 +5,7 @@
 //For sequelize
 const connection = require('../models/User');
 const User = require('../models/User');
-const bycrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 
 module.exports.index_get = (req, res) => {
 	const text = "users";
@@ -19,10 +19,11 @@ module.exports.login_get = async (req, res) => {
 	else{
 		try{
 			const user = await User.findOne({ where: { username: req.query.username } });
-		
-			if (user.username === req.query.username && user.password === req.query.password) 
-				res.render('homepage', {username: req.query.username}); 
 			
+			if (user.username === req.query.username && (bcrypt.compareSync(req.query.password, user.password) === true)) 
+				res.render('homepage', {username: req.query.username}); 
+			else
+				res.render('login', {Error: 'Invalid.'});
 		}catch(e){
 			res.render('login', {Error: 'Sorry. Try again.'});
 		}	
@@ -54,8 +55,8 @@ module.exports.signup_post = (req, res) => {
 
 			//hash password
 			const saltRounds = 10;
-			const salt = await bycrypt.genSaltSync(saltRounds);
-			const hash = await bycrypt.hashSync(req.body.password, salt);
+			const salt = await bcrypt.genSaltSync(saltRounds);
+			const hash = await bcrypt.hashSync(req.body.password, salt);
 			
 			const user = {
 				username: req.body.username,
