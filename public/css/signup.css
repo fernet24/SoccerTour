@@ -27,6 +27,12 @@ li{
 	margin-right: 20px;
 }
 
+a {
+	color: white;
+	text-decoration: none;
+}
+
+
 section{
 	background-color: white;
 	color: black;
