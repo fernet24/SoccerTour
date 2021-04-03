@@ -14,22 +14,35 @@ module.exports.index_get = (req, res) => {
 	res.render('index', { text: text})
 }
 
-module.exports.login_get = async (req, res) => {
+module.exports.login_get = (req, res) => {
+	res.render('login', {Error: ''});
+}
 
-	if(req.query.username === undefined)
-		res.render('login', {Error: ''});
+module.exports.login_post = async (req, res) => {
+
+	if(!(req.body.username || req.body.password)){
+		res.render('login', {Error: 'Slot is vacant. Try again'});
+		return;
+	}
 	else{
 		try{
-			const user = await User.findOne({ where: { username: req.query.username } });
+			const user = await User.findOne({ where: { username: req.body.username} });
+
+			//JWT-IN-PROGRESS
+			const token = createToken(user._id);
+			res.cookie('jwt', token, {httpOnly: true, maxAge: maxAge * 1000});
 			
-			if (user.username === req.query.username && (bcrypt.compareSync(req.query.password, user.password) === true)) 
-				res.render('homepage', {username: req.query.username}); 
+			console.log('user id: ' + user._id);
+			console.log('token: ' + token);
+
+			if (user.username === req.body.username && (bcrypt.compareSync(req.body.password, user.password) === true)) 
+				res.render('homepage', {username: req.body.username}); 
 			else
 				res.render('login', {Error: 'Invalid.'});
 		}catch(e){
 			res.render('login', {Error: 'Sorry. Try again.'});
-		}	
-	} 
+		}
+	}
 }
 
 module.exports.signup_get = (req, res) => {
@@ -66,13 +79,6 @@ module.exports.signup_post = (req, res) => {
 				password: hash,
 			};
 
-			//JWT-IN-PROGRESS
-			const token = createToken(user._id);
-			res.cookie('jwt', token, {httpOnly: true, maxAge: maxAge * 1000});
-			
-			console.log('user id: ' + user._id);
-			console.log('token: ' + token);
-
 			User.create(user).then(data => {
 				res.render('signup', {Error: 'Account was created successfully!'});
 			}).catch(err => {
@@ -93,7 +99,7 @@ module.exports.profile_get = (req, res) => {
 
 const maxAge = 3 * 24 * 60 * 60; //3 days in seconds
 const createToken = (id) =>{
-	return jwt.sign( { id }, 'eazy street', {
+	return jwt.sign( { id }, 'jwt', {
 		expiresIn: maxAge
 	});
 }
