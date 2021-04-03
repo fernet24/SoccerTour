@@ -6,6 +6,8 @@
 const connection = require('../models/User');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
 
 module.exports.index_get = (req, res) => {
 	const text = "users";
@@ -64,6 +66,13 @@ module.exports.signup_post = (req, res) => {
 				password: hash,
 			};
 
+			//JWT-IN-PROGRESS
+			const token = createToken(user._id);
+			res.cookie('jwt', token, {httpOnly: true, maxAge: maxAge * 1000});
+			
+			console.log('user id: ' + user._id);
+			console.log('token: ' + token);
+
 			User.create(user).then(data => {
 				res.render('signup', {Error: 'Account was created successfully!'});
 			}).catch(err => {
@@ -80,4 +89,11 @@ module.exports.search_get = (req, res) => {
 
 module.exports.profile_get = (req, res) => {
 	res.render('profile', {username: ''});
+}
+
+const maxAge = 3 * 24 * 60 * 60; //3 days in seconds
+const createToken = (id) =>{
+	return jwt.sign( { id }, 'eazy street', {
+		expiresIn: maxAge
+	});
 }

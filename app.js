@@ -5,6 +5,7 @@ const mysql = require('mysql');
 const app = express();
 const session = require('express-session');
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/authRoutes');
 const port = 3000;
 
@@ -17,6 +18,7 @@ app.use('/img', express.static(__dirname + 'public/img'))
 //middleware 
 app.use(express.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 //new
 app.use(express.json());
