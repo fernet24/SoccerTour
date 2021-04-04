@@ -30,7 +30,7 @@ module.exports.login_post = async (req, res) => {
 
 			//JWT-IN-PROGRESS
 			const token = createToken(user._id);
-			res.cookie('jwt', token, {httpOnly: true, maxAge: maxAge * 1000});
+			res.cookie(req.body.username, token, {httpOnly: true, maxAge: maxAge * 1000});
 			
 			console.log('user id: ' + user._id);
 			console.log('token: ' + token);
@@ -50,8 +50,7 @@ module.exports.signup_get = (req, res) => {
 }
 
 module.exports.homepage_get = (req, res) => {
-	var usn = req.query.username;
-	res.render('homepage', {username: usn});
+	res.render('homepage', {username: req.query.username});
 }
 
 //link: https://www.esparkinfo.com/node-js-with-mysql-using-sequelize-express.html
@@ -90,15 +89,15 @@ module.exports.signup_post = (req, res) => {
 
 
 module.exports.search_get = (req, res) => {
-	res.render('search', {username: ''});
+	res.render('search', {username: req.query.username});
 }
 
 module.exports.profile_get = (req, res) => {
-	res.render('profile', {username: ''});
+	res.render('profile', {username: req.query.username});
 }
 
 const maxAge = 3 * 24 * 60 * 60; //3 days in seconds
-const createToken = (id) =>{
+const createToken = (id, username) =>{
 	return jwt.sign( { id }, 'jwt', {
 		expiresIn: maxAge
 	});
