@@ -8,6 +8,16 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+//maxAge determines the life span of a json web token in seconds. The following is 1 day in seconds.
+const maxAge = 1 * 24 * 60 * 60; 
+
+//createToken function creates & signs a json web token to later authenticate a user into their account
+const createToken = (username) =>{
+	return jwt.sign( { username }, 'jwt', {
+		expiresIn: maxAge
+	});
+}
+
 
 module.exports.index_get = (req, res) => {
 	const text = "users";
@@ -18,29 +28,33 @@ module.exports.login_get = (req, res) => {
 	res.render('login', {Error: ''});
 }
 
+/* The following asynchronous function authenticates users by validating their username and password using a JWT */
 module.exports.login_post = async (req, res) => {
 
 	if(!(req.body.username || req.body.password)){
 		res.render('login', {Error: 'Slot is vacant. Try again'});
-		return;
+		//return;
 	}
 	else{
 		try{
+			
+			//find user in db
 			const user = await User.findOne({ where: { username: req.body.username} });
 
-			//JWT-IN-PROGRESS
-			const token = createToken(user._id);
-			res.cookie(req.body.username, token, {httpOnly: true, maxAge: maxAge * 1000});
+			//create jwt
+			const token = createToken(user.username);
+			res.cookie('jwt', token, {httpOnly: true, maxAge: maxAge * 1000});
 			
-			console.log('user id: ' + user._id);
+			console.log('username: ' + user.username);
 			console.log('token: ' + token);
 
+			//validate username and password
 			if (user.username === req.body.username && (bcrypt.compareSync(req.body.password, user.password) === true)) 
 				res.render('homepage', {username: req.body.username}); 
-			else
-				res.render('login', {Error: 'Invalid.'});
+			
 		}catch(e){
 			res.render('login', {Error: 'Sorry. Try again.'});
+			console.log(e);
 		}
 	}
 }
@@ -53,9 +67,10 @@ module.exports.homepage_get = (req, res) => {
 	res.render('homepage', {username: req.query.username});
 }
 
-//link: https://www.esparkinfo.com/node-js-with-mysql-using-sequelize-express.html
-
+/*The following function creates and stores users into the database. It stores their username, email, & password. The password is hashed before its stored 
+ into the database. */
 module.exports.signup_post = (req, res) => {	
+
 	//validate request
 	if (!(req.body.username || req.body.email || req.body.password)){
 		res.render('signup', {Error: 'Slot is empty. Try again'});
@@ -72,6 +87,7 @@ module.exports.signup_post = (req, res) => {
 			const salt = await bcrypt.genSaltSync(saltRounds);
 			const hash = await bcrypt.hashSync(req.body.password, salt);
 			
+			//user object
 			const user = {
 				username: req.body.username,
 				email: req.body.email,
@@ -96,9 +112,9 @@ module.exports.profile_get = (req, res) => {
 	res.render('profile', {username: req.query.username});
 }
 
-const maxAge = 3 * 24 * 60 * 60; //3 days in seconds
-const createToken = (id, username) =>{
-	return jwt.sign( { id }, 'jwt', {
-		expiresIn: maxAge
-	});
-}
+module.exports.logout_get = (req, res) => {
+	res.cookie('jwt', '', { maxAge: 1});
+	res.redirect('/');
+} 
+
+
