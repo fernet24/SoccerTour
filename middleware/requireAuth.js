@@ -2,11 +2,11 @@ const jwt = require('jsonwebtoken');
 
 const requireAuth = (req, res, next) => {
 
-	const token = req.cookies.jwt;
+	const token = req.cookies.soccer_secret;
 
-	//check json web token exists is verified
+	//check existence of json web token 
 	if(token){
-		jwt.verify(token, 'jwt' , (err, decodedToken) => {
+		jwt.verify(token, 'soccer_secret' , (err, decodedToken) => {
 			if(err){
 				console.log(err.message);
 				res.redirect('/login');

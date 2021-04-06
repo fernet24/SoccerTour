@@ -8,17 +8,6 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-//maxAge determines the life span of a json web token in seconds. The following is 1 day in seconds.
-const maxAge = 1 * 24 * 60 * 60; 
-
-//createToken function creates & signs a json web token to later authenticate a user into their account
-const createToken = (username) =>{
-	return jwt.sign( { username }, 'jwt', {
-		expiresIn: maxAge
-	});
-}
-
-
 module.exports.index_get = (req, res) => {
 	const text = "users";
 	res.render('index', { text: text})
@@ -37,16 +26,14 @@ module.exports.login_post = async (req, res) => {
 	}
 	else{
 		try{
-			
 			//find user in db
 			const user = await User.findOne({ where: { username: req.body.username} });
 
-			//create jwt
-			const token = createToken(user.username);
-			res.cookie('jwt', token, {httpOnly: true, maxAge: maxAge * 1000});
-			
-			console.log('username: ' + user.username);
-			console.log('token: ' + token);
+			//create json web token
+			const token = createToken(user.username); 
+
+			//store jwt within a cookie accompany with an expiration time/date
+			res.cookie('soccer_secret', token, {httpOnly: true, maxAge: maxAge * 1000});
 
 			//validate username and password
 			if (user.username === req.body.username && (bcrypt.compareSync(req.body.password, user.password) === true)) 
@@ -113,8 +100,20 @@ module.exports.profile_get = (req, res) => {
 }
 
 module.exports.logout_get = (req, res) => {
-	res.cookie('jwt', '', { maxAge: 1});
+
+	//destroy user cookie along with json web token
+	res.cookie('soccer_secret', '', { maxAge: 1});
 	res.redirect('/');
 } 
+
+//maxAge determines the life span of a json web token in seconds. The following is 1 day in seconds.
+const maxAge = 1 * 24 * 60 * 60; 
+
+//createToken function creates & signs a json web token to later authenticate a user into their account
+const createToken = (username) =>{
+	return jwt.sign( { username }, 'soccer_secret', {
+		expiresIn: maxAge
+	});
+}
 
 
