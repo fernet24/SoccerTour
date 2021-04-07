@@ -13,11 +13,6 @@ const requireAuth = (req, res, next) => {
 				res.redirect('/login');
 			}else{
 				console.log(decodedToken);
-				
-				//print username
-				const decoded = jwt.verify(token, 'soccer_secret');
-				var userID = decoded.username;
-				console.log('username: ' + userID);
 				next();
 			}
 		});
