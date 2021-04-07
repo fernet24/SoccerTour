@@ -51,7 +51,7 @@ module.exports.signup_get = (req, res) => {
 }
 
 module.exports.homepage_get = (req, res) => {
-	res.render('homepage', {username: req.query.username});
+	res.render('homepage', {username: getUsername(req.cookies.soccer_secret)});
 }
 
 /*The following function creates and stores users into the database. It stores their username, email, & password. The password is hashed before its stored 
@@ -92,11 +92,11 @@ module.exports.signup_post = (req, res) => {
 
 
 module.exports.search_get = (req, res) => {
-	res.render('search', {username: req.query.username});
+	res.render('search', {username: getUsername(req.cookies.soccer_secret)});
 }
 
 module.exports.profile_get = (req, res) => {
-	res.render('profile', {username: req.query.username});
+	res.render('profile', {username: getUsername(req.cookies.soccer_secret)});
 }
 
 module.exports.logout_get = (req, res) => {
@@ -114,6 +114,11 @@ const createToken = (username) =>{
 	return jwt.sign( { username }, 'soccer_secret', {
 		expiresIn: maxAge
 	});
+}
+
+const getUsername = (req) =>{
+	const decoded = jwt.verify(req, 'soccer_secret');
+	return decoded.username;
 }
 
 
