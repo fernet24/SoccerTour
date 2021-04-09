@@ -4,13 +4,17 @@ const requireAuth = require('../middleware/requireAuth');
 
 const router = Router();
 
+//get
 router.get('', authController.index_get);
 router.get('/login', authController.login_get);
 router.get('/signup', authController.signup_get);
 router.get('/homepage', requireAuth, authController.homepage_get);
 router.get('/search', requireAuth, authController.search_get);
+router.get('/group', requireAuth, authController.group_get);
 router.get('/profile', requireAuth, authController.profile_get);
 router.get('/logout', authController.logout_get);
+
+//post
 router.post('/signup', authController.signup_post);
 router.post('/login', authController.login_post);
 

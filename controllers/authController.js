@@ -95,6 +95,10 @@ module.exports.search_get = (req, res) => {
 	res.render('search', {username: getUsername(req.cookies.soccer_secret)});
 }
 
+module.exports.group_get = (req, res) => {
+	res.render('group', {username: getUsername(req.cookies.soccer_secret)});
+}
+
 module.exports.profile_get = (req, res) => {
 	res.render('profile', {username: getUsername(req.cookies.soccer_secret)});
 }
