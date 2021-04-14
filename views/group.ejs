@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>SoccerTour</title>
-	<link rel="stylesheet" type="text/css" href="css/homepage.css">
+	<link rel="stylesheet" type="text/css" href="css/group.css">
 	<script src="../public/js/signup.js"></script>
 </head>
 <body>
@@ -24,12 +24,27 @@
 
 	<section>
 		<h1>Group page in progress... <%= username %> </h1>
-		<h2><u>My Groups</u></h2>
-		<ul>
-			<li>In progress...1</li>
-			<li>In progress...2</li>
-		</ul>
+		<div class="viewGroup">
+			<h2><u>My Groups</u></h2>
+			<ul>
+				<li>In progress...group 1</li>
+				<li>In progress...group 2</li>
+			</ul>
+		</div>
+		<div class="createGroup">
+			<h2><u>Create Group</u></h2>
+			<form action="/group" method="POST">
+				<label for="title">Title:</label>
+				<input type="text" name="title">
+				<br>
+				<br>
+				<label for="time">Time:</label>
+				<input type="text" name="time">
+				<br>
+				<br>
 
+			</form>
+		</div>
 	</section>
 
 	<footer>
