@@ -99,6 +99,10 @@ module.exports.group_get = (req, res) => {
 	res.render('group', {username: getUsername(req.cookies.soccer_secret)});
 }
 
+module.exports.group_post = (req, res) => {
+	
+}
+
 module.exports.profile_get = (req, res) => {
 	res.render('profile', {username: getUsername(req.cookies.soccer_secret)});
 }
@@ -109,6 +113,10 @@ module.exports.logout_get = (req, res) => {
 	res.cookie('soccer_secret', '', { maxAge: 1});
 	res.redirect('/');
 } 
+
+
+
+
 
 //maxAge determines the life span of a json web token in seconds. The following is 1 day in seconds.
 const maxAge = 1 * 24 * 60 * 60; 
