@@ -27,7 +27,7 @@ var Group = connection.define('group',{
 			max: 23
 		}
 		references: {
-			model: 'User',
+			model: 'user',
 			key: 'username'
 		}
 	},
@@ -35,7 +35,7 @@ var Group = connection.define('group',{
 		type: Sequelize.STRING,
 		unique: true,
 		references: {
-			model: 'User',
+			model: 'user',
 			key: 'username'
 		}
 	}
@@ -43,6 +43,7 @@ var Group = connection.define('group',{
 
 
 module.exports = connection;
+module.exports = Group;
 
 /*
 
