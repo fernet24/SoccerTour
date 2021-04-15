@@ -96,11 +96,18 @@ module.exports.search_get = (req, res) => {
 }
 
 module.exports.group_get = (req, res) => {
-	res.render('group', {username: getUsername(req.cookies.soccer_secret)});
+	res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: ''});
 }
 
 module.exports.group_post = (req, res) => {
-	
+
+	//validate request
+	if (!(req.body.title || req.body.date || req.body.time || req.body.location)){
+		res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: 'Slot is empty. Try again.'});
+		return;
+	}
+
+	//CONTINUE HERE MR. ERIC!!!!
 }
 
 module.exports.profile_get = (req, res) => {
