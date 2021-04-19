@@ -5,6 +5,7 @@
 //For sequelize
 const connection = require('../models/User');
 const User = require('../models/User');
+const Group = require('../models/Group');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -106,8 +107,30 @@ module.exports.group_post = (req, res) => {
 		res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: 'Slot is empty. Try again.'});
 		return;
 	}
+	else{
+		
+		connection.sync({
+			//force: true //forces to delete all values from table
+		}).then(async function(){
+			
+			//group object
+			const group = {
+				title: req.body.title,
+				date: req.body.date,
+				time: req.body.time,
+				location: req.body.location,
+				organizer: getUsername(req.cookies.soccer_secret),
+				members: '',
+			};
 
-	//CONTINUE HERE MR. ERIC!!!!
+			Group.create(group).then(data => {
+				res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: 'Group was created successfully!'});
+			}).catch(err => {
+				res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: 'Try again.'})
+				console.log(err);
+			})
+		})
+	}
 }
 
 module.exports.profile_get = (req, res) => {

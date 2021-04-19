@@ -18,14 +18,14 @@ var Group = connection.define('group',{
 	},
 	location: {
 		type: Sequelize.STRING
-	}
+	},
 	organizer: {
 		type: Sequelize.STRING,
 		unique: true,
 		allowNull: false,
 		validate: {
 			max: 23
-		}
+		},
 		references: {
 			model: 'user',
 			key: 'username'
