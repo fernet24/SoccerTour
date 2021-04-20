@@ -96,8 +96,22 @@ module.exports.search_get = (req, res) => {
 	res.render('search', {username: getUsername(req.cookies.soccer_secret)});
 }
 
-module.exports.group_get = (req, res) => {
-	res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: ''});
+module.exports.group_get = async (req, res) => {
+
+	try{
+		//find user in db
+		const group = await Group.findAll({ where: { organizer: getUsername(req.cookies.soccer_secret)} });
+
+		console.log("GROUP TITLE: " + group[0].title);
+		//console.log("GROUP TITLE: " + group[1].title);
+
+		res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: ''});
+
+	}catch(err){
+		res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: 'Sorry. Try again.'});
+		console.log(err);
+	}
+	//res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: ''});
 }
 
 module.exports.group_post = (req, res) => {
