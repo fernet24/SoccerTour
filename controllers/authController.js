@@ -99,16 +99,16 @@ module.exports.search_get = (req, res) => {
 module.exports.group_get = async (req, res) => {
 
 	try{
-		//find user in db
+		//find user groups in db
 		const group = await Group.findAll({ where: { organizer: getUsername(req.cookies.soccer_secret)} });
 
-		console.log("GROUP TITLE: " + group[0].title);
-		//console.log("GROUP TITLE: " + group[1].title);
+		//console.log("GROUP TITLE: " + group[0].title); //use array if using Group.findAll
+		//console.log("GROUP TITLE: " + group.title); //use this if using Group.findOne
 
-		res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: ''});
+		res.render('group', {username: getUsername(req.cookies.soccer_secret), myGroups: group[0].title, Error: ''});
 
 	}catch(err){
-		res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: 'Sorry. Try again.'});
+		res.render('group', {username: getUsername(req.cookies.soccer_secret), myGroups: '', Error: ''});
 		console.log(err);
 	}
 	//res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: ''});
