@@ -10,8 +10,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 module.exports.index_get = (req, res) => {
-	const text = "users";
-	res.render('index', { text: text})
+	res.render('index', { text: 'users'})
 }
 
 module.exports.login_get = (req, res) => {
@@ -31,14 +30,14 @@ module.exports.login_post = async (req, res) => {
 			const user = await User.findOne({ where: { username: req.body.username} });
 
 			//create json web token
-			const token = createToken(user.username); 
+			const token = createToken(user.username, getSecretName()); 
 
 			//store jwt within a cookie accompany with an expiration time/date
-			res.cookie('soccer_secret', token, {httpOnly: true, maxAge: maxAge * 1000});
+			res.cookie(getSecretName(), token, {httpOnly: true, maxAge: maxAge * 1000});
 
 			//validate username and password
-			if (user.username === req.body.username && (bcrypt.compareSync(req.body.password, user.password) === true)) 
-				res.render('homepage', {username: req.body.username}); 
+			if (user.username === req.body.username && (bcrypt.compareSync(req.body.password, user.password) === true))
+				res.render('homepage', {username: req.body.username});
 			
 		}catch(e){
 			res.render('login', {Error: 'Sorry. Try again.'});
@@ -49,10 +48,6 @@ module.exports.login_post = async (req, res) => {
 
 module.exports.signup_get = (req, res) => {
 	res.render('signup', { Error: ''});
-}
-
-module.exports.homepage_get = (req, res) => {
-	res.render('homepage', {username: getUsername(req.cookies.soccer_secret)});
 }
 
 /*The following function creates and stores users into the database. It stores their username, email, & password. The password is hashed before its stored 
@@ -91,6 +86,9 @@ module.exports.signup_post = (req, res) => {
 	}
 }
 
+module.exports.homepage_get = (req, res) => {
+	res.render('homepage', {username: getUsername(req.cookies.soccer_secret)});
+}
 
 module.exports.search_get = (req, res) => {
 	res.render('search', {username: getUsername(req.cookies.soccer_secret)});
@@ -102,6 +100,7 @@ module.exports.group_get = async (req, res) => {
 		//find user groups in db
 		const group = await Group.findAll({ where: { organizer: getUsername(req.cookies.soccer_secret)} });
 
+		console.log('SECRET: ' + getSecretName());
 
 		res.render('group', {username: getUsername(req.cookies.soccer_secret), myGroups: group[0].title, Error: ''});
 
@@ -163,22 +162,34 @@ module.exports.logout_get = (req, res) => {
 
 
 
-
+//************************JSON WEB TOKEN HELPER FUNCTIONS**********
 //maxAge determines the life span of a json web token in seconds. The following is 1 day in seconds.
 const maxAge = 1 * 24 * 60 * 60; 
 
 //createToken function creates & signs a json web token to later authenticate a user into their account
-const createToken = (username) =>{
-	return jwt.sign( { username }, 'soccer_secret', {
+const createToken = (username, secretName) =>{
+	return jwt.sign( { username }, getSecretName(), {
 		expiresIn: maxAge
 	});
 }
 
+//decodes json web token and returns username
 const getUsername = (req) =>{
-	const decoded = jwt.verify(req, 'soccer_secret');
+	const decoded = jwt.verify(req, getSecretName());
 	return decoded.username;
 }
 
+//jwt secret [sensitive information]
+const getSecretName = () =>{
+	return 'soccer_secret';
+}
+
+//jwt cookie secret encoded [NOT IN USE]
+const getCookieSecret = (req) =>{
+	return req.cookie.soccer_secret;
+}
+
+//************************DB HELPER FUNCTIONS**********************
 //counts the number of groups a user oranizes
 const getNumberOfGroups = async (req) =>{
 
