@@ -102,8 +102,6 @@ module.exports.group_get = async (req, res) => {
 		//find user groups in db
 		const group = await Group.findAll({ where: { organizer: getUsername(req.cookies.soccer_secret)} });
 
-		//console.log("GROUP TITLE: " + group[0].title); //use array if using Group.findAll
-		//console.log("GROUP TITLE: " + group.title); //use this if using Group.findOne
 
 		res.render('group', {username: getUsername(req.cookies.soccer_secret), myGroups: group[0].title, Error: ''});
 
@@ -111,14 +109,13 @@ module.exports.group_get = async (req, res) => {
 		res.render('group', {username: getUsername(req.cookies.soccer_secret), myGroups: '', Error: ''});
 		console.log(err);
 	}
-	//res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: ''});
 }
 
 module.exports.group_post = (req, res) => {
 
 	//validate request
 	if (!(req.body.title || req.body.date || req.body.time || req.body.location)){
-		res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: 'Slot is empty. Try again.'});
+		res.render('group', {username: getUsername(req.cookies.soccer_secret), myGroups: '', Error: 'Slot is empty. Try again.'});
 		return;
 	}
 	else{
@@ -127,6 +124,11 @@ module.exports.group_post = (req, res) => {
 			//force: true //forces to delete all values from table
 		}).then(async function(){
 			
+			/*
+			if( getNumberOfGroups() > 2)
+				res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: 'Sorry. Limit has exceeded.'});
+			*/
+
 			//group object
 			const group = {
 				title: req.body.title,
@@ -138,9 +140,9 @@ module.exports.group_post = (req, res) => {
 			};
 
 			Group.create(group).then(data => {
-				res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: 'Group was created successfully!'});
+				res.render('group', {username: getUsername(req.cookies.soccer_secret), myGroups: '', Error: 'Group was created successfully!'});
 			}).catch(err => {
-				res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: 'Try again.'})
+				res.render('group', {username: getUsername(req.cookies.soccer_secret), myGroups: '', Error: 'Try again.'})
 				console.log(err);
 			})
 		})
@@ -177,4 +179,25 @@ const getUsername = (req) =>{
 	return decoded.username;
 }
 
+//counts the number of groups a user oranizes
+const getNumberOfGroups = async (req) =>{
+
+	const g = await Group.findAndCountAll({ 
+			where: {
+				organizer: getUsername(req.cookies.soccer_secret)
+			},
+			limit: 2
+		}).then(result => {
+			return result.count;
+		})
+}
+
+const printGroups = async (req) =>{
+
+	//console.log("GROUP TITLE: " + group[0].title); //use array if using Group.findAll
+	//console.log("GROUP TITLE: " + group.title); //use this if using Group.findOne
+	const group = await Group.findAll({ where: { organizer: getUsername(req.cookies.soccer_secret)} });
+
+	return group[0].title;
+}
 
