@@ -159,39 +159,6 @@ module.exports.logout_get = (req, res) => {
 } 
 
 
-
-
-//************************JSON WEB TOKEN HELPER FUNCTIONS**********
-/*
-//maxAge determines the life span of a json web token in seconds. The following is 1 day in seconds.
-const maxAge = 1 * 24 * 60 * 60; 
-
-//createToken function creates & signs a json web token to later authenticate a user into their account
-
-const createToken = (username, secretName) =>{
-	return jwt.sign( { username }, getSecretName(), {
-		expiresIn: maxAge
-	});
-}
-
-//decodes json web token and returns username
-const getUsername = (req) =>{
-	const decoded = jwt.verify(req, getSecretName());
-	return decoded.username;
-}
-
-//jwt secret [sensitive information]
-const getSecretName = () =>{
-	return 'soccer_secret';
-}
-
-//jwt cookie secret encoded [NOT IN USE]
-const getCookieSecret = (req) =>{
-	return req.cookie.soccer_secret;
-}
-
-*/
-
 //************************DB HELPER FUNCTIONS**********************
 //counts the number of groups a user oranizes
 const getNumberOfGroups = async (req) =>{
