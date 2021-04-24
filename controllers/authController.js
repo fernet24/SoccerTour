@@ -33,8 +33,6 @@ module.exports.login_post = async (req, res) => {
 			//create json web token
 			const token = JsonWebToken.createToken(user.username); 
 
-			console.log("INSIDE");
-
 			//store jwt within a cookie accompany with an expiration time/date
 			res.cookie(JsonWebToken.getSecretName, token, {httpOnly: true, maxAge: JsonWebToken.maxAge * 1000});
 
