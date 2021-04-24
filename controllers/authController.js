@@ -9,6 +9,8 @@ const Group = require('../models/Group');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const JsonWebToken = require('./JWT/JsonWebToken');
+
 module.exports.index_get = (req, res) => {
 	res.render('index', { text: 'users'})
 }
@@ -22,7 +24,6 @@ module.exports.login_post = async (req, res) => {
 
 	if(!(req.body.username || req.body.password)){
 		res.render('login', {Error: 'Slot is vacant. Try again'});
-		//return;
 	}
 	else{
 		try{
@@ -30,10 +31,12 @@ module.exports.login_post = async (req, res) => {
 			const user = await User.findOne({ where: { username: req.body.username} });
 
 			//create json web token
-			const token = createToken(user.username, getSecretName()); 
+			const token = JsonWebToken.createToken(user.username); 
+
+			console.log("INSIDE");
 
 			//store jwt within a cookie accompany with an expiration time/date
-			res.cookie(getSecretName(), token, {httpOnly: true, maxAge: maxAge * 1000});
+			res.cookie(JsonWebToken.getSecretName, token, {httpOnly: true, maxAge: JsonWebToken.maxAge * 1000});
 
 			//validate username and password
 			if (user.username === req.body.username && (bcrypt.compareSync(req.body.password, user.password) === true))
@@ -87,25 +90,25 @@ module.exports.signup_post = (req, res) => {
 }
 
 module.exports.homepage_get = (req, res) => {
-	res.render('homepage', {username: getUsername(req.cookies.soccer_secret)});
+	res.render('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
 }
 
 module.exports.search_get = (req, res) => {
-	res.render('search', {username: getUsername(req.cookies.soccer_secret)});
+	res.render('search', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
 }
 
 module.exports.group_get = async (req, res) => {
 
 	try{
 		//find user groups in db
-		const group = await Group.findAll({ where: { organizer: getUsername(req.cookies.soccer_secret)} });
+		const group = await Group.findAll({ where: { organizer: JsonWebToken.getUsername(req.cookies.soccer_secret)} });
 
-		console.log('SECRET: ' + getSecretName());
+		console.log('SECRET: ' + JsonWebToken.getSecretName);
 
-		res.render('group', {username: getUsername(req.cookies.soccer_secret), myGroups: group[0].title, Error: ''});
+		res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: group[0].title, Error: ''});
 
 	}catch(err){
-		res.render('group', {username: getUsername(req.cookies.soccer_secret), myGroups: '', Error: ''});
+		res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: '', Error: ''});
 		console.log(err);
 	}
 }
@@ -114,7 +117,7 @@ module.exports.group_post = (req, res) => {
 
 	//validate request
 	if (!(req.body.title || req.body.date || req.body.time || req.body.location)){
-		res.render('group', {username: getUsername(req.cookies.soccer_secret), myGroups: '', Error: 'Slot is empty. Try again.'});
+		res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: '', Error: 'Slot is empty. Try again.'});
 		return;
 	}
 	else{
@@ -134,14 +137,14 @@ module.exports.group_post = (req, res) => {
 				date: req.body.date,
 				time: req.body.time,
 				location: req.body.location,
-				organizer: getUsername(req.cookies.soccer_secret),
+				organizer: JsonWebToken.getUsername(req.cookies.soccer_secret),
 				members: '',
 			};
 
 			Group.create(group).then(data => {
-				res.render('group', {username: getUsername(req.cookies.soccer_secret), myGroups: '', Error: 'Group was created successfully!'});
+				res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: '', Error: 'Group was created successfully!'});
 			}).catch(err => {
-				res.render('group', {username: getUsername(req.cookies.soccer_secret), myGroups: '', Error: 'Try again.'})
+				res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: '', Error: 'Try again.'})
 				console.log(err);
 			})
 		})
@@ -149,7 +152,7 @@ module.exports.group_post = (req, res) => {
 }
 
 module.exports.profile_get = (req, res) => {
-	res.render('profile', {username: getUsername(req.cookies.soccer_secret)});
+	res.render('profile', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
 }
 
 module.exports.logout_get = (req, res) => {
@@ -163,10 +166,12 @@ module.exports.logout_get = (req, res) => {
 
 
 //************************JSON WEB TOKEN HELPER FUNCTIONS**********
+/*
 //maxAge determines the life span of a json web token in seconds. The following is 1 day in seconds.
 const maxAge = 1 * 24 * 60 * 60; 
 
 //createToken function creates & signs a json web token to later authenticate a user into their account
+
 const createToken = (username, secretName) =>{
 	return jwt.sign( { username }, getSecretName(), {
 		expiresIn: maxAge
@@ -188,6 +193,8 @@ const getSecretName = () =>{
 const getCookieSecret = (req) =>{
 	return req.cookie.soccer_secret;
 }
+
+*/
 
 //************************DB HELPER FUNCTIONS**********************
 //counts the number of groups a user oranizes
