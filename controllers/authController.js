@@ -101,8 +101,6 @@ module.exports.group_get = async (req, res) => {
 		//find user groups in db
 		const group = await Group.findAll({ where: { organizer: JsonWebToken.getUsername(req.cookies.soccer_secret)} });
 
-		console.log('SECRET: ' + JsonWebToken.getSecretName);
-
 		res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: group[0].title, Error: ''});
 
 	}catch(err){
