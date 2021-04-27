@@ -8,8 +8,9 @@ const User = require('../models/User');
 const Group = require('../models/Group');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
 const JsonWebToken = require('./JWT/JsonWebToken');
+
+const Group_HelperFunctions = require('../models/Group_HelperFunctions');
 
 module.exports.index_get = (req, res) => {
 	res.render('index', { text: 'users'})
@@ -99,16 +100,13 @@ module.exports.search_get = (req, res) => {
 	res.render('search', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
 }
 
-module.exports.group_get = async (req, res) => {
+module.exports.group_get = (req, res) => { //async
 
 	try{
-		//find user groups in db
-		const group = await Group.findAll(
-			{ where: { 
-				organizer: JsonWebToken.getUsername(req.cookies.soccer_secret)
-			} });
+		
+		Group_HelperFunctions.printGroups(req, res);
 
-		res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: group[0].title, Error: ''});
+		//res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: groupNames, Error: ''});
 
 	}catch(err){
 		res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: '', Error: ''});
@@ -166,26 +164,5 @@ module.exports.logout_get = (req, res) => {
 } 
 
 
-//************************DB HELPER FUNCTIONS**********************
-//counts the number of groups a user oranizes
-const getNumberOfGroups = async (req) =>{
 
-	const g = await Group.findAndCountAll({ 
-			where: {
-				organizer: getUsername(req.cookies.soccer_secret)
-			},
-			limit: 2
-		}).then(result => {
-			return result.count;
-		})
-}
-
-const printGroups = async (req) =>{
-
-	//console.log("GROUP TITLE: " + group[0].title); //use array if using Group.findAll
-	//console.log("GROUP TITLE: " + group.title); //use this if using Group.findOne
-	const group = await Group.findAll({ where: { organizer: getUsername(req.cookies.soccer_secret)} });
-
-	return group[0].title;
-}
 
