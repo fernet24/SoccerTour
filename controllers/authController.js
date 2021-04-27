@@ -91,6 +91,10 @@ module.exports.homepage_get = (req, res) => {
 	res.render('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
 }
 
+module.exports.notification_get = (req, res) => {
+	res.render('notification', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
+}
+
 module.exports.search_get = (req, res) => {
 	res.render('search', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
 }
@@ -99,7 +103,10 @@ module.exports.group_get = async (req, res) => {
 
 	try{
 		//find user groups in db
-		const group = await Group.findAll({ where: { organizer: JsonWebToken.getUsername(req.cookies.soccer_secret)} });
+		const group = await Group.findAll(
+			{ where: { 
+				organizer: JsonWebToken.getUsername(req.cookies.soccer_secret)
+			} });
 
 		res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: group[0].title, Error: ''});
 

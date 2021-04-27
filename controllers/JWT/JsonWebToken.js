@@ -20,9 +20,14 @@ function getUsername(req) {
 	return decoded.username;
 }
 
+function getCookieSecret(req){
+	return req.cookie.soccer_secret;
+}
+
 module.exports = {
 	getUsername: getUsername,
 	maxAge: maxAge,
 	createToken: createToken,
-	getSecretName: getSecretName
+	getSecretName: getSecretName,
+	getCookieSecret: getCookieSecret
 }

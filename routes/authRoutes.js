@@ -9,6 +9,7 @@ router.get('', authController.index_get);
 router.get('/login', authController.login_get);
 router.get('/signup', authController.signup_get);
 router.get('/homepage', requireAuth, authController.homepage_get);
+router.get('/notification', requireAuth, authController.notification_get);
 router.get('/search', requireAuth, authController.search_get);
 router.get('/group', requireAuth, authController.group_get);
 router.get('/profile', requireAuth, authController.profile_get);
