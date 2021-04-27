@@ -103,14 +103,9 @@ module.exports.search_get = (req, res) => {
 module.exports.group_get = (req, res) => { //async
 
 	try{
-		
 		Group_HelperFunctions.printGroups(req, res);
-
-		//res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: groupNames, Error: ''});
-
 	}catch(err){
-		res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: '', Error: ''});
-		console.log(err);
+		console.log('INSIDE GROUP_GET---> '+ err);
 	}
 }
 

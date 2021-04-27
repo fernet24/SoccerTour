@@ -26,7 +26,8 @@ async function printGroups(req, res){
 
 		res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: group[0].title, Error: ''});
 	}catch(err){
-		console.log(err);
+		console.log('INSIDE PRINTGROUPS FUNCTION---> ' + err);
+		res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: '', Error: ''});
 	}
 }
 
