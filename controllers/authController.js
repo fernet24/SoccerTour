@@ -5,12 +5,12 @@
 //For sequelize
 const connection = require('../models/User');
 const User = require('../models/User');
-const Group = require('../models/Group');
+const Group = require('../models/group/Group');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const JsonWebToken = require('./JWT/JsonWebToken');
 
-const Group_HelperFunctions = require('../models/Group_HelperFunctions');
+const Group_HelperFunctions = require('../models/group/Group_HelperFunctions');
 
 module.exports.index_get = (req, res) => {
 	res.render('index', { text: 'users'})

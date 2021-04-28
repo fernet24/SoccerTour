@@ -1,6 +1,6 @@
 
 const Sequelize = require('sequelize');
-const connection = require('./database/databaseConfig');
+const connection = require('../database/databaseConfig');
 
 //Group Model
 var Group = connection.define('group',{

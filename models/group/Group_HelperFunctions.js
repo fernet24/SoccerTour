@@ -1,7 +1,7 @@
 
-const Group = require('../models/Group');
+const Group = require('./Group');
 const jwt = require('jsonwebtoken');
-const JsonWebToken = require('../controllers/JWT/JsonWebToken');
+const JsonWebToken = require('../../controllers/JWT/JsonWebToken');
 
 //counts the number of groups a user organizes
 async function getNumberOfGroups(req){
