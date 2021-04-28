@@ -4,16 +4,23 @@ const jwt = require('jsonwebtoken');
 const JsonWebToken = require('../../controllers/JWT/JsonWebToken');
 
 //counts the number of groups a user organizes
-async function getNumberOfGroups(req){
+async function getNumberOfGroups(request){
 
-	const g = await Group.findAndCountAll({ 
+	try{
+		const g = await Group.findAndCountAll({ 
 			where: {
-				organizer: JsonWebToken.getUsername(req.cookies.soccer_secret)
+				organizer: JsonWebToken.getUsername(request)
 			},
 			limit: 2
 		}).then(result => {
+			console.log('COUNT-----> ' + result.count);
 			return result.count;
 		})
+
+	}catch(err){
+		console.log('GETNUMBEROFGROUPS ERROR--> ' + err);
+	}
+
 }
 
 //prints all groups
@@ -21,13 +28,25 @@ async function printGroups(req, res){
 
 	//console.log("GROUP TITLE: " + group[0].title); //use array if using Group.findAll
 	//console.log("GROUP TITLE: " + group.title); //use this if using Group.findOne
-	try{
-		var group = await Group.findAll({ where: { organizer: JsonWebToken.getUsername(req.cookies.soccer_secret)} });
 
-		res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: group[0].title, Error: ''});
+	var request = req.cookies.soccer_secret;
+
+	try{
+		var group = await Group.findAll({ 
+			where: { 
+				organizer: JsonWebToken.getUsername(request)
+			} 
+		});
+
+		if(getNumberOfGroups(req.cookies.soccer_secret) == null)
+			res.render('group', {username: JsonWebToken.getUsername(request), myGroups: '', Error: ''});
+		else if(getNumberOfGroups(req.cookies.soccer_secret) == 1)
+			res.render('group', {username: JsonWebToken.getUsername(request), myGroups: group[0].title, Error: ''});
+		else
+			res.render('group', {username: JsonWebToken.getUsername(request), myGroups: group[0].title, Error: ''});
 	}catch(err){
-		console.log('INSIDE PRINTGROUPS FUNCTION---> ' + err);
-		res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: '', Error: ''});
+		console.log('PRINTGROUPS FUNCTION ERROR---> ' + err);
+		res.render('group', {username: JsonWebToken.getUsername(request), myGroups: '', Error: ''});
 	}
 }
 
