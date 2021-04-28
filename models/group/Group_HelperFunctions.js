@@ -13,7 +13,7 @@ async function getNumberOfGroups(request){
 			},
 			limit: 2
 		}).then(result => {
-			console.log('COUNT-----> ' + result.count);
+			console.log('Total-----> ' + result.count);
 			return result.count;
 		})
 
@@ -25,9 +25,6 @@ async function getNumberOfGroups(request){
 
 //prints all groups
 async function printGroups(req, res){
-
-	//console.log("GROUP TITLE: " + group[0].title); //use array if using Group.findAll
-	//console.log("GROUP TITLE: " + group.title); //use this if using Group.findOne
 
 	var request = req.cookies.soccer_secret;
 
@@ -43,7 +40,7 @@ async function printGroups(req, res){
 		else if(getNumberOfGroups(req.cookies.soccer_secret) == 1)
 			res.render('group', {username: JsonWebToken.getUsername(request), myGroups: group[0].title, Error: ''});
 		else
-			res.render('group', {username: JsonWebToken.getUsername(request), myGroups: group[0].title, Error: ''});
+			res.render('group', {username: JsonWebToken.getUsername(request), myGroups: 'ALL', Error: ''});
 	}catch(err){
 		console.log('PRINTGROUPS FUNCTION ERROR---> ' + err);
 		res.render('group', {username: JsonWebToken.getUsername(request), myGroups: '', Error: ''});
