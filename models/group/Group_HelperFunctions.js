@@ -6,45 +6,58 @@ const JsonWebToken = require('../../controllers/JWT/JsonWebToken');
 //counts the number of groups a user organizes
 async function getNumberOfGroups(request){
 
-	try{
-		const g = await Group.findAndCountAll({ 
+	var g = await Group.findAndCountAll({ 
 			where: {
 				organizer: JsonWebToken.getUsername(request)
 			},
 			limit: 2
 		}).then(result => {
-			console.log('Total-----> ' + result.count);
-			return result.count;
-		})
+			
+			if(result.count == 0)
+				return 0;
+			else if(result.count == 1)
+				return 1;
+			else
+				return 2;
+			
+		}).catch(err =>{
+			console.log('GETNUMBEROFGROUPS ERROR--> ' + err);
+		});
 
-	}catch(err){
-		console.log('GETNUMBEROFGROUPS ERROR--> ' + err);
-	}
+		var total = `${g}`;
+		console.log(`User has ${g} group(s)`);
 
+		return total;
 }
+
 
 //prints all groups
 async function printGroups(req, res){
 
 	var request = req.cookies.soccer_secret;
 
-	try{
-		var group = await Group.findAll({ 
+	//find all groups of a user
+	var group = await Group.findAll({ 
 			where: { 
 				organizer: JsonWebToken.getUsername(request)
-			} 
-		});
+			}
+		}).then(answer =>{
 
-		if(getNumberOfGroups(req.cookies.soccer_secret) == null)
-			res.render('group', {username: JsonWebToken.getUsername(request), myGroups: '', Error: ''});
-		else if(getNumberOfGroups(req.cookies.soccer_secret) == 1)
-			res.render('group', {username: JsonWebToken.getUsername(request), myGroups: group[0].title, Error: ''});
-		else
-			res.render('group', {username: JsonWebToken.getUsername(request), myGroups: 'ALL', Error: ''});
-	}catch(err){
-		console.log('PRINTGROUPS FUNCTION ERROR---> ' + err);
-		res.render('group', {username: JsonWebToken.getUsername(request), myGroups: '', Error: ''});
-	}
+			//return number of groups
+			var result = getNumberOfGroups(request).then(function(value){ 
+				
+				if(value == 0)
+					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '[empty]', secondGroup: '[empty]', Error: ''});
+				else if(value == 1)
+					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: '[empty]', Error: ''});
+				else
+					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: answer[1].title, Error: ''});
+			})
+
+		}).catch(err =>{
+			console.log('PRINTGROUPS FUNCTION ERROR---> ' + err);
+			res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '[ERROR]', secondGroup: '', Error: ''});
+		})
 }
 
 module.exports = {

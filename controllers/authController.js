@@ -113,7 +113,7 @@ module.exports.group_post = (req, res) => {
 
 	//validate request
 	if (!(req.body.title || req.body.date || req.body.time || req.body.location)){
-		res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: '', Error: 'Slot is empty. Try again.'});
+		res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), firstGroup: '', secondGroup: '', Error: 'Slot is empty. Try again.'});
 		return;
 	}
 	else{
@@ -138,9 +138,9 @@ module.exports.group_post = (req, res) => {
 			};
 
 			Group.create(group).then(data => {
-				res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: '', Error: 'Group was created successfully!'});
+				res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), firstGroup: '', secondGroup: '', Error: 'Group was created successfully!'});
 			}).catch(err => {
-				res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), myGroups: '', Error: 'Try again.'})
+				res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), firstGroup: '', secondGroup: '', Error: 'Try again.'});
 				console.log(err);
 			})
 		})
