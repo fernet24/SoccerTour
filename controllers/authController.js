@@ -3,8 +3,8 @@
 //const connection = require('../models/database/databaseConfig');
 
 //For sequelize
-const connection = require('../models/User');
-const User = require('../models/User');
+const connection = require('../models/user/User');
+const User = require('../models/user/User');
 const Group = require('../models/group/Group');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
