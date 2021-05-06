@@ -32,24 +32,6 @@ async function getNumberOfGroups(request){
 		return total;
 }
 
-//checks if user exceeded group limit
-async function exceededGroupLimit(res, request){
-
-	//find all groups of a user
-	var group = await Group.findAll({ 
-			where: { 
-				organizer: JsonWebToken.getUsername(request)
-			}
-		}).then(answer =>{
-		
-			res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: answer[1].title, Error: 'Sorry. Exceeded group limit.'});
-
-		}).catch(err =>{
-			console.log('EXCEEDEDGROUPLIMIT FUNCTION ERROR---> ' + err);
-			res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '[ERROR]', secondGroup: '', Error: ''});
-		})
-}
-
 //prints all groups
 async function printGroups(req, res){
 
