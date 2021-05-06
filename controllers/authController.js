@@ -111,9 +111,11 @@ module.exports.group_get = (req, res) => { //async
 
 module.exports.group_post = (req, res) => {
 
+	var request = req.cookies.soccer_secret;
+
 	//validate request
 	if (!(req.body.title || req.body.date || req.body.time || req.body.location)){
-		res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), firstGroup: '', secondGroup: '', Error: 'Slot is empty. Try again.'});
+		res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '', secondGroup: '', Error: 'Slot is empty. Try again.'});
 		return;
 	}
 	else{
@@ -122,27 +124,35 @@ module.exports.group_post = (req, res) => {
 			//force: true //forces to delete all values from table
 		}).then(async function(){
 			
-			/*
-			if( getNumberOfGroups() > 2)
-				res.render('group', {username: getUsername(req.cookies.soccer_secret), Error: 'Sorry. Limit has exceeded.'});
-			*/
+			var result = Group_HelperFunctions.getNumberOfGroups(request).then(function(totalGroups){ 
+				
+				console.log('VALUE---> ' + totalGroups);
 
-			//group object
-			const group = {
-				title: req.body.title,
-				date: req.body.date,
-				time: req.body.time,
-				location: req.body.location,
-				organizer: JsonWebToken.getUsername(req.cookies.soccer_secret),
-				members: '',
-			};
+				//'FIX HERE'
+				if(totalGroups > 2){
+					Group_HelperFunctions.printGroups(req, res);
+				}
+				else {
+					//group object
+					var group = {
+						title: req.body.title,
+						date: req.body.date,
+						time: req.body.time,
+						location: req.body.location,
+						organizer: JsonWebToken.getUsername(request),
+						members: '',
+					};
 
-			Group.create(group).then(data => {
-				res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), firstGroup: '', secondGroup: '', Error: 'Group was created successfully!'});
-			}).catch(err => {
-				res.render('group', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), firstGroup: '', secondGroup: '', Error: 'Try again.'});
-				console.log(err);
-			})
+					Group.create(group).then(data => {
+						res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '', secondGroup: '', Error: 'Group was created successfully!'});
+					}).catch(err => {
+						res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '', secondGroup: '', Error: 'Try again.'});
+						console.log(err);
+					}) 
+				}
+					}) 
+
+
 		})
 	}
 }
