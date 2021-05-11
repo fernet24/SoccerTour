@@ -112,7 +112,6 @@ module.exports.group_get = (req, res) => { //async
 module.exports.group_post = (req, res) => {
 
 	var request = req.cookies.soccer_secret;
-	var created = false;
 
 	//validate request
 	if (!(req.body.title || req.body.date || req.body.time || req.body.location)){
