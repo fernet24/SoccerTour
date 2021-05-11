@@ -54,7 +54,7 @@ async function printGroups(req, res){
 				else if(value == 2)
 					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: answer[1].title, Error: ''});
 				else if(value == 9)
-					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: answer[1].title, Error: 'Unable to create new groups. Exceeded group limit.'});
+					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: answer[1].title, Error: 'Unable to create new groups. Reached group limit.'});
 			})
 
 		}).catch(err =>{
