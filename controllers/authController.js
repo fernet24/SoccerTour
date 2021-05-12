@@ -96,8 +96,8 @@ module.exports.notification_get = (req, res) => {
 	res.render('notification', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
 }
 
-module.exports.search_get = (req, res) => {
-	res.render('search', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
+module.exports.groupInfo_get = (req, res) => {
+	res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
 }
 
 module.exports.group_get = (req, res) => { //async
