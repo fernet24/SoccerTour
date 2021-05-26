@@ -111,11 +111,12 @@ module.exports.groupInfo_get = (req, res) => {
 		/*
 		//if request is vacant then redirect user to homepage
 		if(!req.query.search)
-			res.redirect('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
+			res.render('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
 		*/
+		var groupName = req.query.search;
+		console.log('search name: ' + groupName);
 
-
-		res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: req.query.search, date: '[empty]', time: '[empty]', location: '[empty]', organizer: '[empty]', members: '[empty]'});
+		res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: '[empty]', time: '[empty]', location: '[empty]', organizer: '[empty]', members: '[empty]'});
 	}catch(err){
 		res.render('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
 	}
