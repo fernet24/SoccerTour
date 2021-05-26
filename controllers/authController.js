@@ -89,7 +89,11 @@ module.exports.signup_post = (req, res) => {
 }
 
 module.exports.homepage_get = (req, res) => {
-	res.render('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
+	try{
+		res.render('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
+	}catch(err){
+		res.render('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
+	}
 }
 
 module.exports.notification_get = (req, res) => {
@@ -97,7 +101,25 @@ module.exports.notification_get = (req, res) => {
 }
 
 module.exports.groupInfo_get = (req, res) => {
-	res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: '[empty]', date: '[empty]', time: '[empty]', location: '[empty]', organizer: '[empty]', members: '[empty]'});
+	/*
+	1. Create Search file and call object here
+	2. Search Object shall check database
+	3. Upload info to groupInfo
+	 */
+
+	try{
+		/*
+		//if request is vacant then redirect user to homepage
+		if(!req.query.search)
+			res.redirect('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
+		*/
+
+
+		res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: req.query.search, date: '[empty]', time: '[empty]', location: '[empty]', organizer: '[empty]', members: '[empty]'});
+	}catch(err){
+		res.render('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
+	}
+
 }
 
 module.exports.group_get = (req, res) => { //async
