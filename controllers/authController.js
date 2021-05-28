@@ -100,7 +100,7 @@ module.exports.notification_get = (req, res) => {
 	res.render('notification', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
 }
 
-module.exports.groupInfo_get = (req, res) => {
+module.exports.groupInfo_get = async (req, res) => {
 	/*
 	1. Create Search file and call object here
 	2. Search Object shall check database
@@ -116,8 +116,26 @@ module.exports.groupInfo_get = (req, res) => {
 		var groupName = req.query.search;
 		console.log('search name: ' + groupName);
 
-		res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: '[empty]', time: '[empty]', location: '[empty]', organizer: '[empty]', members: '[empty]'});
+		//find all groups of a user
+		var group = await Group.findAll({ 
+				where: { 
+					title: groupName
+				}
+			}).then(answer =>{
+				console.log('title: ' + answer[0].title);
+				console.log('date: ' + answer[0].date);
+				console.log('location: ' + answer[0].location);
+				console.log('organizer: ' + answer[0].organizer);
+
+				res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: answer[0].date, time: answer[0].time, location: answer[0].location, organizer: answer[0].organizer, members: '[empty] or  in-progress'});
+
+			}).catch(err =>{
+				console.log('GROUPINFO FUNCTION ERROR---> ' + err);
+				res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '[ERROR]', secondGroup: '', Error: ''});
+			})
+
 	}catch(err){
+		console.log('ERROR: USER SUBMITTED A BLANK FORM!');
 		res.render('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
 	}
 
