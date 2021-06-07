@@ -98,8 +98,11 @@ a {
 	margin-left: 50px;
 }
 
+p{
+	color: red;
+}
+
 footer{
 	background-color: black;
 	color: white;
 }
-

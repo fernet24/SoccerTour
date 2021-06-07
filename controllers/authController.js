@@ -12,6 +12,13 @@ const JsonWebToken = require('./JWT/JsonWebToken');
 
 const Group_HelperFunctions = require('../models/group/Group_HelperFunctions');
 
+var groupName = 'undefined';
+var groupTitle = 'undefined';
+var groupDate = 'undefined';
+var groupTime = 'undefined';
+var groupLocation = 'undefined';
+var groupOrganizer = 'undefined';
+
 module.exports.index_get = (req, res) => {
 	res.render('index', { text: 'users'})
 }
@@ -97,23 +104,16 @@ module.exports.homepage_get = (req, res) => {
 }
 
 module.exports.notification_get = (req, res) => {
+
 	res.render('notification', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
 }
 
 module.exports.groupInfo_get = async (req, res) => {
-	/*
-	1. Create Search file and call object here
-	2. Search Object shall check database
-	3. Upload info to groupInfo
-	 */
+
+	var username = JsonWebToken.getUsername(req.cookies.soccer_secret);
 
 	try{
-		/*
-		//if request is vacant then redirect user to homepage
-		if(!req.query.search)
-			res.render('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
-		*/
-		var groupName = req.query.search;
+		groupName = req.query.search;
 		console.log('search name: ' + groupName);
 
 		//find all groups of a user
@@ -124,10 +124,17 @@ module.exports.groupInfo_get = async (req, res) => {
 			}).then(answer =>{
 				console.log('title: ' + answer[0].title);
 				console.log('date: ' + answer[0].date);
+				console.log('time: ' + answer[0].time);
 				console.log('location: ' + answer[0].location);
 				console.log('organizer: ' + answer[0].organizer);
 
-				res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: answer[0].date, time: answer[0].time, location: answer[0].location, organizer: answer[0].organizer, members: '[empty] or  in-progress'});
+				groupTitle = answer[0].title;
+				groupDate = answer[0].date;
+				groupTime = answer[0].time;
+				groupLocation = answer[0].location;
+				groupOrganizer = answer[0].organizer;
+
+				res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: answer[0].date, time: answer[0].time, location: answer[0].location, organizer: answer[0].organizer, members: '[empty] or  in-progress', Error: ''});
 
 			}).catch(err =>{
 				console.log('GROUPINFO FUNCTION ERROR---> ' + err);
@@ -139,6 +146,29 @@ module.exports.groupInfo_get = async (req, res) => {
 		res.render('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
 	}
 
+}
+
+//LEFT OFF HERE**********************************************
+module.exports.groupInfo_post = async (req, res) => {
+
+	var username = JsonWebToken.getUsername(req.cookies.soccer_secret);
+
+	try{
+		console.log('INSIDE TRYY GROUPINFO POST');
+		console.log('username---> ' + username);
+		
+		if(username == groupOrganizer){
+			console.log('CAN NOT JOIN!')
+			res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: '[empty] or  in-progress', Error: 'UNABLE TO JOIN. YOU ARE AN ORGANIZER.'});
+		}
+		else{
+			console.log('JOIN US!');
+			res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: '[empty] or  in-progress', Error: 'JOINED!'});
+		}
+
+	}catch(err){
+		res.render('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
+	}
 }
 
 module.exports.group_get = (req, res) => { //async
@@ -208,7 +238,6 @@ module.exports.logout_get = (req, res) => {
 	res.cookie('soccer_secret', '', { maxAge: 1});
 	res.redirect('/');
 } 
-
 
 
 

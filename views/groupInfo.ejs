@@ -40,6 +40,17 @@
 			<br>
 			<br>
 			<li><b>Members:</b> <%= members %></li>
+			<br>
+			<br>
+			<li>
+				<form method="POST" action='/groupInfo'>
+					<div class="button">
+						<input type="submit" name="Join" value="Join">
+					</div>
+				</form>
+			</li>
+			<br>
+			<li><p><%= Error %></p></li>
 		</ul>
 	</section>
 
