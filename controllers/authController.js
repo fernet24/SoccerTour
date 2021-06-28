@@ -159,7 +159,7 @@ module.exports.groupInfo_post = async (req, res) => {
 		
 		if(username == groupOrganizer){
 			console.log('CAN NOT JOIN!')
-			res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: '[empty] or  in-progress', Error: 'UNABLE TO JOIN. YOU ARE AN ORGANIZER.'});
+			res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: '[empty] or  in-progress', Error: 'UNABLE TO JOIN. YOU ARE THE ORGANIZER.'});
 		}
 		else{
 			console.log('JOIN US!');
