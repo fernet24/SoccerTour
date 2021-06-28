@@ -3,17 +3,8 @@ const Sequelize = require('sequelize');
 const connection = require('../database/databaseConfig');
 
 //Membership Model
-/*
+
 var Membership = connection.define('membership', {
-	username: {
-
-	}
-	groupTitle: {
-
-	}
-})
-
-var User = connection.define('user', {
 	username: {
 		type: Sequelize.STRING,
 		primaryKey: true,
@@ -25,16 +16,22 @@ var User = connection.define('user', {
 				msg: 'username not valid.'
 			}
 		}
+		references: {
+			model: 'user',
+			key: 'username'
+		}
 	},
-	email: {
+	groupTitle: {
 		type: Sequelize.STRING,
+		primaryKey: true,
 		unique: true,
 		allowNull: false,
-		isEmail: true
-	},
-	password: {
-		type: Sequelize.STRING,
-		allowNull: false
+		references: {
+			model: 'group',
+			key: 'title'
+		}
 	}
-});
-*/
+})
+
+module.exports = connection;
+module.exports = Membership;
