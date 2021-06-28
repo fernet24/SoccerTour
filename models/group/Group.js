@@ -30,14 +30,6 @@ var Group = connection.define('group',{
 			model: 'user',
 			key: 'username'
 		}
-	},
-	members: {
-		type: Sequelize.STRING,
-		unique: true,
-		references: {
-			model: 'user',
-			key: 'username'
-		}
 	}
 });
 

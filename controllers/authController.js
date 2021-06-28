@@ -211,7 +211,6 @@ module.exports.group_post = (req, res) => {
 						time: req.body.time,
 						location: req.body.location,
 						organizer: JsonWebToken.getUsername(request),
-						members: '',
 					};
 
 					Group.create(group).then(data => {
