@@ -3,11 +3,11 @@ const Sequelize = require('sequelize');
 const connection = require('../database/databaseConfig');
 
 //Membership Model
-
 var Membership = connection.define('membership', {
 	username: {
 		type: Sequelize.STRING,
 		primaryKey: true,
+		foreignKey: true,
 		unique: true,
 		allowNull: false, //can user enter a null value (false)
 		validate: {
@@ -16,20 +16,13 @@ var Membership = connection.define('membership', {
 				msg: 'username not valid.'
 			}
 		}
-		references: {
-			model: 'user',
-			key: 'username'
-		}
 	},
 	groupTitle: {
 		type: Sequelize.STRING,
-		primaryKey: true,
+		//primaryKey: true,
+		foreignKey: true,
 		unique: true,
 		allowNull: false,
-		references: {
-			model: 'group',
-			key: 'title'
-		}
 	}
 })
 

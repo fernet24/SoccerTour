@@ -6,6 +6,7 @@
 const connection = require('../models/user/User');
 const User = require('../models/user/User');
 const Group = require('../models/group/Group');
+const Membership = require('../models/membership/Membership');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const JsonWebToken = require('./JWT/JsonWebToken');
@@ -13,7 +14,7 @@ const JsonWebToken = require('./JWT/JsonWebToken');
 const Group_HelperFunctions = require('../models/group/Group_HelperFunctions');
 
 var groupName = 'undefined';
-var groupTitle = 'undefined';
+//var groupTitle = 'undefined';
 var groupDate = 'undefined';
 var groupTime = 'undefined';
 var groupLocation = 'undefined';
@@ -152,22 +153,27 @@ module.exports.groupInfo_get = async (req, res) => {
 module.exports.groupInfo_post = async (req, res) => {
 
 	var username = JsonWebToken.getUsername(req.cookies.soccer_secret);
-
-	try{
-		console.log('INSIDE TRYY GROUPINFO POST');
-		console.log('username---> ' + username);
 		
-		if(username == groupOrganizer){
-			console.log('CAN NOT JOIN!')
-			res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: '[empty] or  in-progress', Error: 'UNABLE TO JOIN. YOU ARE THE ORGANIZER.'});
-		}
-		else{
-			console.log('JOIN US!');
-			res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: '[empty] or  in-progress', Error: 'JOINED!'});
-		}
+	if(username == groupOrganizer){
+		res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: '[empty] or  in-progress', Error: 'UNABLE TO JOIN. YOU ARE THE ORGANIZER.'});
+	}
+	else{
+		connection.sync({
 
-	}catch(err){
-		res.render('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
+		}).then(async function(){
+
+			var member = {
+				username: username,
+				groupTitle: groupName,
+			};
+
+			Membership.create(member).then(data => {
+				res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: '[empty] or  in-progress', Error: 'JOINED!'});
+			}).catch(err => {
+				console.log('JOINING ERROR: ' + err);
+				res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: '[empty] or  in-progress', Error: 'ALREADY JOINED!'});
+			})
+		})
 	}
 }
 
