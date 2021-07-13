@@ -113,9 +113,28 @@ module.exports.groupInfo_get = async (req, res) => {
 
 	var username = JsonWebToken.getUsername(req.cookies.soccer_secret);
 
+	var people = [];
+
 	try{
 		groupName = req.query.search;
 		console.log('search name: ' + groupName);
+
+		//TESTING!!!
+		var members = await Membership.findAll({
+			where: {
+				groupTitle: groupName
+			}
+		}).then(answer =>{
+			people = [answer[0].username];
+			console.log(answer[0].username);
+
+		}).catch(err =>{
+			console.log('ERROR IN CALLING Membership TABLE: ' + err);
+		})
+
+		console.log('OUTSIDE DB CALL: ' + people[0]);
+
+		//TESTING!!!
 
 		//find all groups of a user
 		var group = await Group.findAll({ 
@@ -135,8 +154,12 @@ module.exports.groupInfo_get = async (req, res) => {
 				groupLocation = answer[0].location;
 				groupOrganizer = answer[0].organizer;
 
-				res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: answer[0].date, time: answer[0].time, location: answer[0].location, organizer: answer[0].organizer, members: '[empty] or  in-progress', Error: ''});
+				if(people.length == 0)
+					res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: answer[0].date, time: answer[0].time, location: answer[0].location, organizer: answer[0].organizer, members: 'NONE', Error: ''});
+				else
+					res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: answer[0].date, time: answer[0].time, location: answer[0].location, organizer: answer[0].organizer, members: people[0], Error: ''});
 
+		
 			}).catch(err =>{
 				console.log('GROUPINFO FUNCTION ERROR---> ' + err);
 				res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '[ERROR]', secondGroup: '', Error: ''});
