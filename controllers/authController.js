@@ -246,7 +246,7 @@ module.exports.group_post = (req, res) => {
 					Group.create(group).then(data => {
 						Group_HelperFunctions.printGroups(req, res);
 					}).catch(err => {
-						res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '', secondGroup: '', Error: 'Try again.'});
+						res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '', secondGroup: '', myGroups: 'In-progress...' , Error: 'Try again.'});
 						console.log(err);
 					}) 
 				}

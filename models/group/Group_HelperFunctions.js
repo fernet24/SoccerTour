@@ -1,5 +1,6 @@
 
 const Group = require('./Group');
+const Membership = require('../membership/Membership');
 const jwt = require('jsonwebtoken');
 const JsonWebToken = require('../../controllers/JWT/JsonWebToken');
 
@@ -48,18 +49,18 @@ async function printGroups(req, res){
 			var result = getNumberOfGroups(request).then(function(value){ 
 				
 				if(value == 0)
-					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '[empty]', secondGroup: '[empty]', Error: ''});
+					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '[empty]', secondGroup: '[empty]', myGroups: 'In-progress...' , Error: ''});
 				else if(value == 1)
-					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: '[empty]', Error: ''});
+					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: '[empty]', myGroups: 'In-progress...' , Error: ''});
 				else if(value == 2)
-					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: answer[1].title, Error: ''});
+					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: answer[1].title, myGroups: 'In-progress...' , Error: ''});
 				else if(value == 9)
-					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: answer[1].title, Error: 'Unable to create new groups. Reached group limit.'});
+					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: answer[1].title, myGroups: 'In-progress...' , Error: 'Unable to create new groups. Reached group limit.'});
 			})
 
 		}).catch(err =>{
 			console.log('PRINTGROUPS FUNCTION ERROR---> ' + err);
-			res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '[ERROR]', secondGroup: '', Error: ''});
+			res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '[ERROR]', secondGroup: '', myGroups: 'In-progress...' , Error: ''});
 		})
 }
 
