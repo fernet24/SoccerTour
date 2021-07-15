@@ -19,6 +19,7 @@ var groupDate = 'undefined';
 var groupTime = 'undefined';
 var groupLocation = 'undefined';
 var groupOrganizer = 'undefined';
+var groupMembers = [];
 
 module.exports.index_get = (req, res) => {
 	res.render('index', { text: 'users'})
@@ -113,28 +114,29 @@ module.exports.groupInfo_get = async (req, res) => {
 
 	var username = JsonWebToken.getUsername(req.cookies.soccer_secret);
 
-	var people = [];
-
 	try{
 		groupName = req.query.search;
 		console.log('search name: ' + groupName);
 
-		//TESTING!!!
 		var members = await Membership.findAll({
 			where: {
 				groupTitle: groupName
 			}
 		}).then(answer =>{
-			people = [answer[0].username];
-			console.log(answer[0].username);
+			
+			if(answer.length != 0)
+			{
+				for(i = 0; i < answer.length; i++)
+					groupMembers[i] = answer[i].username;
+			}
+			else
+				groupMembers = [answer[0].username];
+
+			console.log('groupMembers: ' + answer[0].username);
 
 		}).catch(err =>{
 			console.log('ERROR IN CALLING Membership TABLE: ' + err);
 		})
-
-		console.log('OUTSIDE DB CALL: ' + people[0]);
-
-		//TESTING!!!
 
 		//find all groups of a user
 		var group = await Group.findAll({ 
@@ -154,10 +156,10 @@ module.exports.groupInfo_get = async (req, res) => {
 				groupLocation = answer[0].location;
 				groupOrganizer = answer[0].organizer;
 
-				if(people.length == 0)
+				if(groupMembers.length == 0)
 					res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: answer[0].date, time: answer[0].time, location: answer[0].location, organizer: answer[0].organizer, members: 'NONE', Error: ''});
 				else
-					res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: answer[0].date, time: answer[0].time, location: answer[0].location, organizer: answer[0].organizer, members: people[0], Error: ''});
+					res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: answer[0].date, time: answer[0].time, location: answer[0].location, organizer: answer[0].organizer, members: groupMembers, Error: ''});
 
 		
 			}).catch(err =>{
@@ -172,13 +174,12 @@ module.exports.groupInfo_get = async (req, res) => {
 
 }
 
-//LEFT OFF HERE**********************************************
 module.exports.groupInfo_post = async (req, res) => {
 
 	var username = JsonWebToken.getUsername(req.cookies.soccer_secret);
 		
 	if(username == groupOrganizer){
-		res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: '[empty] or  in-progress', Error: 'UNABLE TO JOIN. YOU ARE THE ORGANIZER.'});
+		res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: groupMembers, Error: 'UNABLE TO JOIN. YOU ARE THE ORGANIZER.'});
 	}
 	else{
 		connection.sync({
@@ -191,10 +192,10 @@ module.exports.groupInfo_post = async (req, res) => {
 			};
 
 			Membership.create(member).then(data => {
-				res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: '[empty] or  in-progress', Error: 'JOINED!'});
+				res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: groupMembers, Error: 'JOINED!'});
 			}).catch(err => {
 				console.log('JOINING ERROR: ' + err);
-				res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: '[empty] or  in-progress', Error: 'ALREADY JOINED!'});
+				res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: groupMembers, Error: 'YOU ARE A MEMBER!'});
 			})
 		})
 	}
