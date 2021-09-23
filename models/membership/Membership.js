@@ -6,7 +6,7 @@ const connection = require('../database/databaseConfig');
 var Membership = connection.define('membership', {
 	username: {
 		type: Sequelize.STRING,
-		primaryKey: true,
+		primaryKey: false, //was comment before
 		foreignKey: true,
 		unique: true,
 		allowNull: false, //can user enter a null value (false)
@@ -19,9 +19,9 @@ var Membership = connection.define('membership', {
 	},
 	groupTitle: {
 		type: Sequelize.STRING,
-		//primaryKey: true,
+		primaryKey: true,
 		foreignKey: true,
-		unique: true,
+		//unique: true,
 		allowNull: false,
 	}
 })

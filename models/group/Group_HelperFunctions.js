@@ -34,9 +34,29 @@ async function getNumberOfGroups(request){
 }
 
 //prints all groups
-async function printGroups(req, res){
+async function printGroups(req, res, Membership, memberOf){
 
 	var request = req.cookies.soccer_secret;
+
+	//find groups which user is a member of
+	var members = await Membership.findAll({
+		where: {
+			username: JsonWebToken.getUsername(request)
+		}
+	}).then(answer =>{
+		
+		console.log('MEMBER OF: ' + answer[0].groupTitle);
+
+		if(answer.length != 0){
+			for(i = 0; i < answer.length; i++)
+				memberOf[i] = answer[i].groupTitle;
+		}
+		else
+			memberOf = [answer[0].groupTitle];
+
+	}).catch(err =>{
+		console.log('ERROR IN CALLING Membership TABLE: ' + err);
+	})
 
 	//find all groups of a user
 	var group = await Group.findAll({ 
@@ -49,18 +69,18 @@ async function printGroups(req, res){
 			var result = getNumberOfGroups(request).then(function(value){ 
 				
 				if(value == 0)
-					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '[empty]', secondGroup: '[empty]', myGroups: 'In-progress...' , Error: ''});
+					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '[empty]', secondGroup: '[empty]', myGroups: memberOf , Error: ''});
 				else if(value == 1)
-					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: '[empty]', myGroups: 'In-progress...' , Error: ''});
+					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: '[empty]', myGroups: memberOf , Error: ''});
 				else if(value == 2)
-					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: answer[1].title, myGroups: 'In-progress...' , Error: ''});
+					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: answer[1].title, myGroups: memberOf , Error: ''});
 				else if(value == 9)
-					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: answer[1].title, myGroups: 'In-progress...' , Error: 'Unable to create new groups. Reached group limit.'});
+					res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: answer[0].title, secondGroup: answer[1].title, myGroups: memberOf , Error: 'Unable to create new groups. Reached group limit.'});
 			})
 
 		}).catch(err =>{
 			console.log('PRINTGROUPS FUNCTION ERROR---> ' + err);
-			res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '[ERROR]', secondGroup: '', myGroups: 'In-progress...' , Error: ''});
+			res.render('group', {username: JsonWebToken.getUsername(request), firstGroup: '[ERROR]', secondGroup: '', myGroups: memberOf , Error: ''});
 		})
 }
 
