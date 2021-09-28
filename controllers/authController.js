@@ -117,6 +117,8 @@ module.exports.groupInfo_get = async (req, res) => {
 
 	try{
 		groupName = req.query.search;
+		groupMembers = []; //9/24: ADDED
+		
 		console.log('search name: ' + groupName);
 
 		//find all members from searched group
@@ -125,20 +127,20 @@ module.exports.groupInfo_get = async (req, res) => {
 				groupTitle: groupName
 			}
 		}).then(answer =>{
-			
+			console.log('LENGTH: ' + answer.length);
 			if(answer.length != 0)
 			{
 				for(i = 0; i < answer.length; i++)
 					groupMembers[i] = answer[i].username;
 			}
-			else
-				groupMembers = [answer[0].username];
-			
-			console.log('groupMembers: ' + groupMembers);
+			else{
+				groupMembers = 0;
+				console.log('zero members: ' + groupMembers);
+			}
 
 		}).catch(err =>{
-			console.log('ERROR IN CALLING Membership TABLE DUE TO groupTitle: ' + err);
-			res.render('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)});
+			console.log('ERROR! GROUP TITLE DOES NOT EXIST!-> ' + err);
+			res.render('homepage', {username: JsonWebToken.getUsername(req.cookies.soccer_secret)}); 
 		})
 
 		//find all groups of a user
@@ -159,7 +161,7 @@ module.exports.groupInfo_get = async (req, res) => {
 				groupLocation = answer[0].location;
 				groupOrganizer = answer[0].organizer;
 
-				if(groupMembers.length == 0)
+				if(groupMembers == 0)
 					res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: answer[0].date, time: answer[0].time, location: answer[0].location, organizer: answer[0].organizer, members: 'NONE', Error: ''});
 				else
 					res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: answer[0].date, time: answer[0].time, location: answer[0].location, organizer: answer[0].organizer, members: groupMembers, Error: ''});
@@ -181,7 +183,14 @@ module.exports.groupInfo_get = async (req, res) => {
 module.exports.groupInfo_post = async (req, res) => {
 
 	var username = JsonWebToken.getUsername(req.cookies.soccer_secret);
-		
+
+	//var groupMembers = [];
+	console.log('Group Members (inside groupInfo_post): ' + groupMembers);
+	
+	//checks if user is registered in the group
+	/*if(groupMembers.indexOf(username) !== -1){
+		res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: groupMembers, Error: 'YOU ARE A MEMBER ALREADY!'});
+	}*/
 	if(username == groupOrganizer){
 		res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: groupMembers, Error: 'UNABLE TO JOIN. YOU ARE THE ORGANIZER.'});
 	}
