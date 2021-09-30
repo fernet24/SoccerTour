@@ -44,8 +44,6 @@ async function printGroups(req, res, Membership, memberOf){
 			username: JsonWebToken.getUsername(request)
 		}
 	}).then(answer =>{
-		
-		console.log('MEMBER OF: ' + answer[0].groupTitle);
 
 		if(answer.length != 0){
 			for(i = 0; i < answer.length; i++)
@@ -53,6 +51,8 @@ async function printGroups(req, res, Membership, memberOf){
 		}
 		else
 			memberOf = [answer[0].groupTitle];
+
+		console.log('MEMBER OF: ' + memberOf);
 
 	}).catch(err =>{
 		console.log('ERROR IN CALLING Membership TABLE: ' + err);

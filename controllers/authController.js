@@ -21,6 +21,7 @@ var groupLocation = 'undefined';
 var groupOrganizer = 'undefined';
 var groupMembers = [];
 var memberOf = [];
+var memberOf_index = 0;
 
 module.exports.index_get = (req, res) => {
 	res.render('index', { text: 'users'})
@@ -118,6 +119,9 @@ module.exports.groupInfo_get = async (req, res) => {
 	try{
 		groupName = req.query.search;
 		groupMembers = []; //9/24: ADDED
+
+		console.log('Group Members: ' + groupMembers);
+		console.log('Member of: ' + memberOf);
 		
 		console.log('search name: ' + groupName);
 
@@ -180,20 +184,20 @@ module.exports.groupInfo_get = async (req, res) => {
 
 }
 
-module.exports.groupInfo_post = async (req, res) => {
+module.exports.groupInfo_post = (req, res) => { //async
 
 	var username = JsonWebToken.getUsername(req.cookies.soccer_secret);
 
 	//var groupMembers = [];
 	console.log('Group Members (inside groupInfo_post): ' + groupMembers);
 	
-	//checks if user is registered in the group
-	/*if(groupMembers.indexOf(username) !== -1){
-		res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: groupMembers, Error: 'YOU ARE A MEMBER ALREADY!'});
-	}*/
 	if(username == groupOrganizer){
 		res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: groupMembers, Error: 'UNABLE TO JOIN. YOU ARE THE ORGANIZER.'});
 	}
+	//checks if user is registered in the group
+	else if(memberOf.indexOf(username) !== 1){
+		res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: groupMembers, Error: 'YOU ARE A MEMBER ALREADY AMIGO!'});
+	} 
 	else{
 		connection.sync({
 
@@ -205,6 +209,8 @@ module.exports.groupInfo_post = async (req, res) => {
 			};
 
 			Membership.create(member).then(data => {
+				memberOf[memberOf_index] = groupName;
+				memberOf_index++;
 				res.render('groupInfo', {username: JsonWebToken.getUsername(req.cookies.soccer_secret), title: groupName, date: groupDate, time: groupTime, location: groupLocation, organizer: groupOrganizer, members: groupMembers, Error: 'JOINED!'});
 			}).catch(err => {
 				console.log('JOINING ERROR: ' + err);
