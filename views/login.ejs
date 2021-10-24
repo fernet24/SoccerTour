@@ -7,15 +7,17 @@
 	<link rel="stylesheet" type="text/css" href="css/login.css">
 
 	<script src="../public/js/signup.js"></script>
+
 </head>
 <body>
+
 	<header>
 		<div class="logo">
 			<h1>SoccerTour</h1>
 		</div>
 		<div class="navMenu">
 			<ul>
-				<li><a href="/signup">Signup</a></li>
+				<li><a class="signup" href="/signup">Signup</a></li>
 			</ul>
 		</div>
 	</header>
@@ -43,12 +45,30 @@
 				<div class="button">
 					<input type="submit" value="submit">
 				</div>
+
 			</form>
-		</div>
+			<script>
+			  window.fbAsyncInit = function() {
+			    FB.init({
+			      appId            : '179691054337099',
+			      autoLogAppEvents : true,
+			      xfbml            : true,
+			      version          : 'v12.0'
+			    });
+			  };
+			</script>
+			<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+
+			<div class="fb-login-button" data-width="15" data-size="medium" data-button-type="login_with" data-layout="default" data-auto-logout-link="true" data-use-continue-as="false">
+			Sign in with Facebook
+			</div>
+
+		</div> <!--end of centerInfo-->
 	</section>
 
 	<footer>
 		<h4>Footer</h4>
 	</footer>
 </body>
+
 </html>
